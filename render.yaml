@@ -1,0 +1,181 @@
+services:
+  - type: redis
+    name: eparking-redis
+    plan: free
+    ipAllowList: []
+
+  - type: web
+    name: eparking-api
+    runtime: docker
+    dockerfilePath: services/api/Dockerfile
+    dockerContext: .
+    plan: starter
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: API_HOST
+        value: 0.0.0.0
+      - key: API_PORT
+        value: 8000
+      - key: PORT
+        value: 8000
+      - key: POSTGRES_HOST
+        sync: false
+      - key: POSTGRES_PORT
+        value: 5432
+      - key: POSTGRES_DB
+        value: eparking
+      - key: POSTGRES_USER
+        value: postgres
+      - key: POSTGRES_PASSWORD
+        sync: false
+      - key: PAYSTACK_SECRET_KEY
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: SECRET_ENCRYPTION_KEY
+        sync: false
+      - key: JWT_ALGORITHM
+        value: HS256
+      - key: JWT_EXPIRY_MINUTES
+        value: 60
+      - key: ADMIN_API_KEY
+        sync: false
+      - key: VIEWER_API_KEY
+        sync: false
+      - key: SESSION_COOKIE_SECURE
+        value: true
+      - key: CORS_ORIGINS
+        sync: false
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: eparking-redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: eparking-redis
+          property: port
+      - key: REDIS_DB
+        value: 0
+      - key: REDIS_PASSWORD
+        sync: false
+    preDeployCommand: python -m app.migrate
+
+  - type: worker
+    name: eparking-worker
+    runtime: docker
+    dockerfilePath: services/ingestion/Dockerfile
+    dockerContext: .
+    dockerCommand: celery -A app.celery_app worker --loglevel=INFO
+    plan: starter
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: POSTGRES_HOST
+        sync: false
+      - key: POSTGRES_PORT
+        value: 5432
+      - key: POSTGRES_DB
+        value: eparking
+      - key: POSTGRES_USER
+        value: postgres
+      - key: POSTGRES_PASSWORD
+        sync: false
+      - key: PAYSTACK_SECRET_KEY
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: SECRET_ENCRYPTION_KEY
+        sync: false
+      - key: JWT_ALGORITHM
+        value: HS256
+      - key: JWT_EXPIRY_MINUTES
+        value: 60
+      - key: ADMIN_API_KEY
+        sync: false
+      - key: VIEWER_API_KEY
+        sync: false
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: eparking-redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: eparking-redis
+          property: port
+      - key: REDIS_DB
+        value: 0
+      - key: REDIS_PASSWORD
+        sync: false
+
+  - type: worker
+    name: eparking-beat
+    runtime: docker
+    dockerfilePath: services/ingestion/Dockerfile
+    dockerContext: .
+    dockerCommand: celery -A app.celery_app beat --loglevel=INFO
+    plan: starter
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: POSTGRES_HOST
+        sync: false
+      - key: POSTGRES_PORT
+        value: 5432
+      - key: POSTGRES_DB
+        value: eparking
+      - key: POSTGRES_USER
+        value: postgres
+      - key: POSTGRES_PASSWORD
+        sync: false
+      - key: PAYSTACK_SECRET_KEY
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: SECRET_ENCRYPTION_KEY
+        sync: false
+      - key: JWT_ALGORITHM
+        value: HS256
+      - key: JWT_EXPIRY_MINUTES
+        value: 60
+      - key: ADMIN_API_KEY
+        sync: false
+      - key: VIEWER_API_KEY
+        sync: false
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: eparking-redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: eparking-redis
+          property: port
+      - key: REDIS_DB
+        value: 0
+      - key: REDIS_PASSWORD
+        sync: false
+
+  - type: web
+    name: eparking-frontend
+    runtime: node
+    rootDir: frontend
+    buildCommand: npm run build
+    startCommand: npm run start
+    plan: starter
+    envVars:
+      - key: API_BASE_URL
+        sync: false
+      - key: NEXT_PUBLIC_API_BASE_URL
+        sync: false
+      - key: APP_ORIGIN
+        sync: false
+      - key: ADMIN_API_KEY
+        sync: false
+      - key: VIEWER_API_KEY
+        sync: false
