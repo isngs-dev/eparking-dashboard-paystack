@@ -1,0 +1,51 @@
+/*
+ * Design tokens transcribed verbatim from the Claude Design mockup
+ * (`E-Parking Dashboard.dc.html`) -- no renaming, no re-derivation.
+ * Light values on :root, dark overrides on [data-theme="dark"].
+ */
+
+:root {
+  --bg: #eceff6;
+  --card: #ffffff;
+  --bd: #e4e8f1;
+  --tx: #0f1533;
+  --mu: #6a7192;
+  --navy: #1b2a63;
+  --navy2: #2b3d7d;
+  --cyan: #21c5f0;
+  --cyansoft: #d9f3fd;
+  --grid: #e9ecf4;
+  --chip: #f1f4fa;
+  --acc: #ff682c;
+  --navbg: #131e4f;
+  --navtx: #c3cdf0;
+  --s1: #1b2a63;
+  --s2: #4a63b8;
+  --s3: #21c5f0;
+  --s4: #b9ecfb;
+  --s5: #ff682c;
+  --tipbg: #0f1533;
+  --tiptx: #ffffff;
+}
+
+[data-theme="dark"] {
+  --bg: #04081a;
+  --card: #101838;
+  --bd: #232f57;
+  --tx: #eef1fa;
+  --mu: #959fc4;
+  --cyansoft: #123049;
+  --grid: #1d2750;
+  --chip: #182144;
+  --navbg: #0a1030;
+  --navtx: #b4bfe4;
+  --navy: #4059b5;
+  --navy2: #93a5ec;
+  --s1: #7189e6;
+  --s2: #a3b3f2;
+  --s3: #31cdf5;
+  --s4: #67c4e8;
+  --s5: #ff8a5c;
+  --tipbg: #e8ecf9;
+  --tiptx: #0f1533;
+}

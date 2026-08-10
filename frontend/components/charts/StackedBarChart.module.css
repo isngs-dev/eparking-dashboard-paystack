@@ -1,0 +1,60 @@
+.wrap {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
+}
+
+.yAxis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-size: 9.5px;
+  color: var(--mu);
+  padding: 2px 0 20px;
+  text-align: right;
+  min-width: 42px;
+}
+
+.chartArea {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.svg {
+  width: 100%;
+  height: calc(100% - 18px);
+  /* See SmoothAreaChart.module.css .svg comment: explicit ceiling as a
+     backstop against a future unbounded flex/1fr ancestor. */
+  max-height: 302px;
+  display: block;
+}
+
+.segment {
+  pointer-events: none;
+}
+
+.hitOverlay {
+  cursor: crosshair;
+  pointer-events: all;
+}
+
+.hitOverlay:hover {
+  fill: rgba(33, 197, 240, 0.1);
+}
+
+.xAxis {
+  position: relative;
+  height: 18px;
+}
+
+.xLabel {
+  position: absolute;
+  transform: translateX(-50%);
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-size: 9.5px;
+  color: var(--mu);
+  white-space: nowrap;
+}

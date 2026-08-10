@@ -1,0 +1,4 @@
+# Dev-only test dependencies -- not installed in the runtime Docker image
+# (see services/ingestion/Dockerfile, which only installs requirements.txt).
+-r requirements.txt
+pytest>=8.0,<9.0

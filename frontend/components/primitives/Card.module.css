@@ -1,0 +1,19 @@
+.card {
+  background: var(--card);
+  border: 1px solid var(--bd);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  /*
+   * Grid items default to a content-based automatic minimum size, which lets
+   * a flex-column child (e.g. the chart `.wrap`/`.chartArea` flex:1 chain)
+   * push the card taller than the grid row's capped height instead of
+   * shrinking to fit it. min-height:0 lets the card actually respect the
+   * row's minmax() ceiling from BodyGrid.module.css.
+   */
+  min-height: 0;
+  overflow: hidden;
+}

@@ -1,0 +1,46 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  justify-content: center;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: default;
+}
+
+.label {
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-size: 11px;
+  color: var(--tx);
+  flex-shrink: 0;
+}
+
+.track {
+  flex: 1;
+  height: 16px;
+  background: var(--chip);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.2s ease;
+}
+
+.right {
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--mu);
+  min-width: 42px;
+  text-align: right;
+  flex-shrink: 0;
+}

@@ -1,0 +1,69 @@
+.card {
+  padding: 16px 18px;
+  justify-content: center;
+  gap: 10px;
+}
+
+.label {
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--mu);
+}
+
+.value {
+  font-family: var(--font-space-grotesk), "Space Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: 30px;
+  color: var(--tx);
+  font-variant-numeric: tabular-nums;
+}
+
+.breakdown {
+  border-top: 1px solid var(--bd);
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-size: 11.5px;
+}
+
+.swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.rowLabel {
+  color: var(--mu);
+}
+
+.rowValue {
+  margin-left: auto;
+  color: var(--tx);
+  font-variant-numeric: tabular-nums;
+}
+
+.detail {
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-size: 9.5px;
+  color: var(--mu);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.footnote {
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-size: 9px;
+  font-style: italic;
+  color: var(--mu);
+  margin: 0;
+}

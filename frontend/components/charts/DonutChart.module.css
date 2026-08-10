@@ -1,0 +1,38 @@
+.wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+.svg {
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+}
+
+.arc {
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.arc:hover {
+  opacity: 0.85;
+}
+
+.centerValue {
+  font-family: var(--font-space-grotesk), "Space Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  fill: var(--tx);
+}
+
+.centerLabel {
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-weight: 400;
+  font-size: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  fill: var(--mu);
+}

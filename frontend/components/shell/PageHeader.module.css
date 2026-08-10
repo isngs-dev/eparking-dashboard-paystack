@@ -1,0 +1,23 @@
+.header {
+  padding: 16px 26px 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.title {
+  font-family: var(--font-space-grotesk), "Space Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: 22px;
+  color: var(--tx);
+}
+
+.tag {
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-weight: 500;
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--chip);
+  color: var(--mu);
+}

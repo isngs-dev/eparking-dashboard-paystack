@@ -1,0 +1,40 @@
+.callout {
+  justify-content: center;
+  gap: 7px;
+  background: var(--cyansoft);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iconBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--s1);
+  color: var(--card);
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.title {
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-weight: 600;
+  font-size: 10.5px;
+}
+
+.body {
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-weight: 400;
+  font-size: 10px;
+  opacity: 0.8;
+  margin: 0;
+  line-height: 1.5;
+}

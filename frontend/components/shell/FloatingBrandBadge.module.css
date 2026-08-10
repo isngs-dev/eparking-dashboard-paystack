@@ -1,0 +1,30 @@
+.badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: 34px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: var(--card);
+  border: 1px solid var(--bd);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
+  pointer-events: none; /* decorative -- never intercept chart hovers */
+}
+
+.mark {
+  height: 22px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* Viewport-pinned variant, used once per dashboard page. */
+.fixed {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  /* Above page content; deliberately BELOW the 1000 overlay tier used by
+     Tooltip.module.css and DateRangePicker.module.css. */
+  z-index: 40;
+}

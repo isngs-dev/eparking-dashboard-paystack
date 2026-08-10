@@ -1,0 +1,13 @@
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  flex: 1;
+}
+
+.empty {
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-size: 11px;
+  color: var(--mu);
+  margin: 0;
+}

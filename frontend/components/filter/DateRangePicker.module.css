@@ -1,0 +1,222 @@
+/* Trigger chip -- reuses the .chip/.chipLabel recipe from FilterBar.module.css
+   verbatim for pixel parity with the Vehicle-type/Day chips. */
+.wrap {
+  position: relative;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--chip);
+  border: 1px solid var(--bd);
+  border-radius: 8px;
+  padding: 7px 11px;
+  cursor: pointer;
+  font-family: var(--font-inter), Inter, sans-serif;
+}
+
+.trigger:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 1px;
+}
+
+.triggerOpen {
+  border-color: var(--navy);
+}
+
+.chipLabel {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--mu);
+  white-space: nowrap;
+}
+
+.value {
+  font-size: 11px;
+  color: var(--tx);
+  white-space: nowrap;
+}
+
+/* Popover shell -- CSS-only anchored positioning, no JS measurement. */
+.popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 1000;
+  width: 268px;
+  background: var(--card);
+  border: 1px solid var(--bd);
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  font-family: var(--font-inter), Inter, sans-serif;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.monthTitle {
+  font-family: var(--font-space-grotesk), "Space Grotesk", sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--tx);
+}
+
+.navBtn {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--bd);
+  border-radius: 6px;
+  color: var(--mu);
+  cursor: pointer;
+  padding: 0;
+}
+
+.navBtn:hover:not(:disabled) {
+  background: var(--chip);
+}
+
+.navBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.navBtn:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 1px;
+}
+
+.weekdayRow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 2px;
+}
+
+.weekday {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--mu);
+  text-align: center;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  row-gap: 2px;
+}
+
+.row {
+  display: contents;
+}
+
+.cell {
+  display: flex;
+  align-items: stretch;
+}
+
+.day {
+  width: 34px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--tx);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  padding: 0;
+  margin: 0 auto;
+}
+
+.day:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: -2px;
+}
+
+.dayOutside {
+  color: var(--mu);
+  opacity: 0.45;
+}
+
+.dayHover {
+  background: var(--chip);
+}
+
+.dayToday {
+  color: var(--acc);
+  font-weight: 600;
+  box-shadow: inset 0 0 0 1px var(--acc);
+  border-radius: 8px;
+}
+
+.dayInRange {
+  background: var(--cyansoft);
+  border-radius: 0;
+  width: 100%;
+}
+
+.dayInRangePreview {
+  background: var(--cyansoft);
+  opacity: 0.55;
+  border-radius: 0;
+  width: 100%;
+}
+
+.dayStart {
+  background: var(--navy);
+  color: #ffffff;
+  border-radius: 8px 0 0 8px;
+  width: 100%;
+}
+
+.dayEnd {
+  background: var(--navy);
+  color: #ffffff;
+  border-radius: 0 8px 8px 0;
+  width: 100%;
+}
+
+.daySingle {
+  background: var(--navy);
+  color: #ffffff;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.dayAnchor {
+  background: var(--navy);
+  color: #ffffff;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.dayDisabled {
+  color: var(--mu);
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

@@ -1,0 +1,101 @@
+.wrap {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
+}
+
+.yAxis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-size: 9.5px;
+  color: var(--mu);
+  padding: 2px 0 20px;
+  text-align: right;
+  min-width: 42px;
+}
+
+.chartArea {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.svg {
+  width: 100%;
+  height: calc(100% - 18px);
+  /*
+   * Belt-and-suspenders: .chartArea's flex:1 is bounded by the grid row's
+   * capped height (see BodyGrid.module.css), but pin an explicit ceiling
+   * here too so a future unbounded ancestor can't silently reintroduce the
+   * runaway-height bug this file was written to fix.
+   */
+  max-height: 302px;
+  display: block;
+  overflow: visible;
+}
+
+.hitRect {
+  cursor: crosshair;
+}
+
+.hitRect:hover {
+  fill: rgba(33, 197, 240, 0.16);
+}
+
+.xAxis {
+  position: relative;
+  height: 18px;
+}
+
+.xLabel {
+  position: absolute;
+  transform: translateX(-50%);
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-size: 9.5px;
+  color: var(--mu);
+  white-space: nowrap;
+}
+
+.peakBand {
+  position: absolute;
+  top: 0;
+  bottom: 18px;
+  background: var(--navy);
+  opacity: 0.1;
+  pointer-events: none;
+  /*
+   * Negative z-index deliberately: .svg below is a static (non-positioned)
+   * in-flow element, and per CSS stacking rules static content always
+   * paints above positioned descendants with z-index <= 0 regardless of
+   * DOM order. Without this, the band would paint OVER the chart's
+   * area/line instead of behind it, occluding the curve it's meant to
+   * highlight.
+   */
+  z-index: -1;
+}
+
+.peakBandLabel {
+  /*
+   * A sibling of .peakBand and .svg (not a descendant of .peakBand) so it
+   * paints in its own right: DOM order places it after .svg, and as a
+   * positioned element with the default z-index:auto it paints above the
+   * preceding static .svg and above .peakBand's z-index:-1 stacking
+   * context, without needing an explicit z-index of its own. Positioned
+   * here (top:4px, containing block is .chartArea) so it reads as sitting
+   * just inside the top of the highlighted band rather than floating
+   * above the chart entirely.
+   */
+  position: absolute;
+  top: 4px;
+  transform: translateX(-50%);
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-weight: 600;
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--mu);
+  white-space: nowrap;
+}

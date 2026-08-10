@@ -1,0 +1,51 @@
+.row {
+  flex: 1;
+  background: var(--chip);
+  border-radius: 9px;
+  padding: 11px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 7px;
+  cursor: default;
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.title {
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--tx);
+}
+
+.range {
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-size: 10px;
+  color: var(--mu);
+}
+
+.pct {
+  font-family: var(--font-space-grotesk), "Space Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: 26px;
+  color: var(--tx);
+  font-variant-numeric: tabular-nums;
+}
+
+.track {
+  height: 5px;
+  border-radius: 3px;
+  background: var(--grid);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  border-radius: 3px;
+}

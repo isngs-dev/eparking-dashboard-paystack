@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>
+body{margin:0;background:#eceff6;overflow:hidden}
+:root{--bg:#eceff6;--card:#ffffff;--bd:#e4e8f1;--tx:#0f1533;--mu:#6a7192;--navy:#1b2a63;--navy2:#2b3d7d;--cyan:#21c5f0;--cyansoft:#d9f3fd;--grid:#e9ecf4;--chip:#f1f4fa;--acc:#ff682c;--navbg:#131e4f;--navtx:#c3cdf0;--s1:#1b2a63;--s2:#4a63b8;--s3:#21c5f0;--s4:#b9ecfb;--s5:#ff682c;--tipbg:#0f1533;--tiptx:#ffffff}
+[data-theme="dark"]{--bg:#04081a;--card:#101838;--bd:#232f57;--tx:#eef1fa;--mu:#959fc4;--cyansoft:#123049;--grid:#1d2750;--chip:#182144;--navbg:#0a1030;--navtx:#b4bfe4;--navy:#4059b5;--navy2:#93a5ec;--s1:#7189e6;--s2:#a3b3f2;--s3:#31cdf5;--s4:#67c4e8;--s5:#ff8a5c;--tipbg:#e8ecf9;--tiptx:#0f1533}
+a{color:var(--cyan);text-decoration:none}a:hover{color:var(--navy2)}
+input,select,button{font-family:Inter,system-ui,sans-serif}
+</style></helmet>
+<div data-theme="{{ theme }}" style="background:var(--bg);color:var(--tx);font-family:Inter,system-ui,sans-serif;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center" ref="{{ stageRef }}">
+<div style="width:1440px;height:900px;flex:none;position:relative;display:flex;flex-direction:column;background:var(--bg);border-radius:12px;overflow:hidden;box-shadow:0 10px 40px rgba(8,14,38,.16);transform-origin:center center;transform:scale({{ scale }})">
+
+<div style="flex:none;background:var(--navbg);padding:0 26px;display:flex;align-items:center;gap:26px;height:56px">
+<div style="display:flex;align-items:center;gap:10px">
+<div style="width:28px;height:28px;border-radius:8px;background:var(--cyan);display:grid;place-items:center;font:700 14px Space Grotesk,sans-serif;color:#0b1230">P</div>
+<span style="font:600 14px Space Grotesk,sans-serif;color:#fff">E-Parking</span>
+</div>
+<nav style="display:flex;gap:5px;padding:4px;background:rgba(255,255,255,.08);border-radius:999px">
+<button onClick="{{ goOverview }}" style="font:600 12px Inter,sans-serif;padding:8px 18px;border:0;border-radius:999px;cursor:pointer;background:{{ pillOvBg }};color:{{ pillOvTx }}">Overview · Revenue</button>
+<button onClick="{{ goUsage }}" style="font:600 12px Inter,sans-serif;padding:8px 18px;border:0;border-radius:999px;cursor:pointer;background:{{ pillUsBg }};color:{{ pillUsTx }}">Occupancy &amp; Traffic</button>
+</nav>
+<div style="margin-left:auto;display:flex;align-items:center;gap:14px">
+<div style="display:flex;align-items:center;gap:7px"><span style="width:6px;height:6px;border-radius:50%;background:var(--cyan)"></span><span style="font:500 11px Inter,sans-serif;color:var(--navtx)">Paystack · synced 14:02</span></div>
+<button onClick="{{ toggleTheme }}" style="font:600 11px Inter,sans-serif;padding:7px 13px;border:1px solid rgba(255,255,255,.18);border-radius:999px;cursor:pointer;background:transparent;color:#fff">{{ themeLabel }}</button>
+<div style="width:29px;height:29px;border-radius:50%;background:var(--navy2);display:grid;place-items:center;font:600 10.5px Inter,sans-serif;color:#fff">AO</div>
+</div>
+</div>
+
+<header style="flex:none;padding:16px 26px 0;display:flex;align-items:center;gap:16px">
+<h1 style="margin:0;font:600 22px/1.1 Space Grotesk,sans-serif;color:var(--tx);letter-spacing:-.015em">{{ pageTitle }}</h1>
+<span style="font:500 11px Inter,sans-serif;color:var(--mu);padding:5px 10px;border-radius:999px;background:var(--chip)">{{ pageTag }}</span>
+</header>
+
+<div style="flex:none;margin:12px 26px 0;padding:12px 16px;background:var(--card);border:1px solid var(--bd);border-radius:10px;display:flex;align-items:center;gap:12px">
+<span style="font:600 9px Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--mu);padding-right:4px">Global filters</span>
+<div style="display:flex;align-items:center;gap:8px;padding:7px 11px;border-radius:8px;background:var(--chip);border:1px solid var(--bd)">
+<span style="font:600 8.5px Inter,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--mu)">Date range</span>
+<input type="date" value="2026-05-02" style="font:500 11.5px Inter,sans-serif;color:var(--tx);background:transparent;border:0;padding:0" />
+<span style="font:400 11px Inter,sans-serif;color:var(--mu)">→</span>
+<input type="date" value="2026-06-14" style="font:500 11.5px Inter,sans-serif;color:var(--tx);background:transparent;border:0;padding:0" />
+</div>
+<div style="display:flex;align-items:center;gap:8px;padding:7px 11px;border-radius:8px;background:var(--chip);border:1px solid var(--bd)">
+<span style="font:600 8.5px Inter,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--mu)">Vehicle type</span>
+<select style="font:500 11.5px Inter,sans-serif;color:var(--tx);background:transparent;border:0"><option>All types</option><option>Car</option><option>Minibus</option><option>SUV</option><option>Lorry Truck</option><option>Porter</option></select>
+</div>
+<div style="display:flex;align-items:center;gap:8px;padding:7px 11px;border-radius:8px;background:var(--chip);border:1px solid var(--bd)">
+<span style="font:600 8.5px Inter,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--mu)">Day</span>
+<select style="font:500 11.5px Inter,sans-serif;color:var(--tx);background:transparent;border:0"><option>All days</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option></select>
+</div>
+<span style="font:400 11px Inter,sans-serif;color:var(--mu)">44 days · applies to both pages</span>
+<div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+<button style="font:500 11.5px Inter,sans-serif;padding:8px 13px;border:1px solid var(--bd);border-radius:8px;background:transparent;color:var(--tx);cursor:pointer">Export</button>
+<button style="font:600 11.5px Inter,sans-serif;padding:8px 14px;border:0;border-radius:8px;background:var(--navy);color:#fff;cursor:pointer">Clear all filters</button>
+</div>
+</div>
+
+<sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+<div style="flex:1;min-height:0;padding:12px 26px 20px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:auto minmax(0,1fr) minmax(0,1fr);gap:14px">
+
+<sc-for list="{{ overviewKpis }}" as="k" hint-placeholder-count="4">
+<div onMouseEnter="{{ k.onEnter }}" onMouseLeave="{{ clearTip }}" style="background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:7px">
+<div style="display:flex;align-items:center;gap:8px">
+<span style="font:600 11px Inter,sans-serif;color:var(--mu)">{{ k.label }}</span>
+<span style="margin-left:auto;font:600 9.5px Inter,sans-serif;color:{{ k.deltaColor }}">{{ k.delta }}</span>
+</div>
+<span style="font:600 26px/1 Space Grotesk,sans-serif;letter-spacing:-.02em;color:var(--tx);font-variant-numeric:tabular-nums">{{ k.value }}</span>
+<span style="font:400 10px Inter,sans-serif;color:var(--mu)">{{ k.window }}</span>
+</div>
+</sc-for>
+
+<section style="grid-column:span 3;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px 18px 11px;display:flex;flex-direction:column;gap:10px;min-height:0">
+<div style="flex:none;display:flex;align-items:baseline;gap:10px">
+<h2 style="margin:0;font:600 13.5px Space Grotesk,sans-serif;color:var(--tx)">Revenue Trend</h2>
+<span style="font:400 10.5px Inter,sans-serif;color:var(--mu)">Total collection per day · 12 May – 10 Jun 2026</span>
+<span style="margin-left:auto;display:flex;align-items:center;gap:6px;font:500 10px Inter,sans-serif;color:var(--mu)"><span style="width:14px;height:3px;border-radius:2px;background:var(--s1)"></span>Total collection</span>
+</div>
+<div style="flex:1;min-height:0;display:flex;gap:9px">
+<div style="flex:none;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end">
+<sc-for list="{{ trendYLabels }}" as="l" hint-placeholder-count="5"><span style="font:400 9.5px Inter,sans-serif;color:var(--mu)">{{ l }}</span></sc-for>
+</div>
+<div style="flex:1;min-width:0;position:relative;background-image:repeating-linear-gradient(to top,var(--grid) 0 1px,transparent 1px 25%)">
+<svg viewBox="0 0 1000 200" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;display:block">
+<path d="{{ trendArea }}" fill="var(--cyansoft)"></path>
+<path d="{{ trendLine }}" fill="none" stroke="var(--s1)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"></path>
+<sc-for list="{{ trendHits }}" as="r" hint-placeholder-count="30">
+<rect onMouseEnter="{{ r.onEnter }}" onMouseLeave="{{ clearTip }}" x="{{ r.x }}" y="0" width="{{ r.w }}" height="200" fill="transparent" style="cursor:crosshair" style-hover="fill:rgba(33,197,240,.16)"></rect>
+</sc-for>
+</svg>
+</div>
+</div>
+<div style="flex:none;display:flex;padding-left:44px">
+<sc-for list="{{ trendXLabels }}" as="l" hint-placeholder-count="11"><span style="flex:1;text-align:center;font:400 9.5px Inter,sans-serif;color:var(--mu)">{{ l }}</span></sc-for>
+</div>
+</section>
+
+<section style="background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;min-height:0">
+<div style="flex:none;display:flex;align-items:center;gap:7px">
+<h2 style="margin:0;font:600 13.5px Space Grotesk,sans-serif;color:var(--tx)">AICL / GSDS Split</h2>
+<span title="Hover a segment for the entity name, amount and share." style="width:14px;height:14px;flex:none;border-radius:50%;border:1px solid var(--bd);background:var(--chip);color:var(--mu);display:grid;place-items:center;font:600 9px Inter,sans-serif;cursor:help">i</span>
+</div>
+<div style="flex:1;min-height:0;display:flex;align-items:center;justify-content:center">
+<svg viewBox="0 0 120 120" style="height:100%;width:auto;display:block">
+<sc-for list="{{ splitArcs }}" as="a" hint-placeholder-count="2">
+<circle onMouseEnter="{{ a.onEnter }}" onMouseLeave="{{ clearTip }}" cx="60" cy="60" r="45" fill="none" stroke="{{ a.color }}" stroke-width="20" stroke-dasharray="{{ a.dash }}" stroke-dashoffset="{{ a.offset }}" transform="rotate(-90 60 60)" style="cursor:pointer"></circle>
+</sc-for>
+<text x="60" y="58" text-anchor="middle" style="font:600 15px Space Grotesk,sans-serif;fill:var(--tx)">₦48.7m</text>
+<text x="60" y="70" text-anchor="middle" style="font:400 6.5px Inter,sans-serif;fill:var(--mu);letter-spacing:.12em">TOTAL COLLECTION</text>
+</svg>
+</div>
+</section>
+
+<section style="grid-column:span 3;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px 18px 11px;display:flex;flex-direction:column;gap:10px;min-height:0">
+<div style="flex:none;display:flex;align-items:baseline;gap:10px">
+<h2 style="margin:0;font:600 13.5px Space Grotesk,sans-serif;color:var(--tx)">Card Sales</h2>
+<span style="font:400 10.5px Inter,sans-serif;color:var(--mu)">Annual vs Monthly, by week</span>
+<div style="margin-left:auto;display:flex;gap:14px">
+<span style="display:flex;align-items:center;gap:6px;font:500 10px Inter,sans-serif;color:var(--mu)"><span style="width:9px;height:9px;border-radius:2px;background:var(--s1)"></span>Annual ₦10,500</span>
+<span style="display:flex;align-items:center;gap:6px;font:500 10px Inter,sans-serif;color:var(--mu)"><span style="width:9px;height:9px;border-radius:2px;background:var(--s3)"></span>Monthly ₦2,000</span>
+</div>
+</div>
+<div style="flex:1;min-height:0;display:flex;gap:9px">
+<div style="flex:none;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end">
+<sc-for list="{{ cardYLabels }}" as="l" hint-placeholder-count="4"><span style="font:400 9.5px Inter,sans-serif;color:var(--mu)">{{ l }}</span></sc-for>
+</div>
+<div style="flex:1;min-width:0;position:relative;background-image:repeating-linear-gradient(to top,var(--grid) 0 1px,transparent 1px 33.33%)">
+<svg viewBox="0 0 560 200" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;display:block">
+<sc-for list="{{ cardRects }}" as="r" hint-placeholder-count="12">
+<rect onMouseEnter="{{ r.onEnter }}" onMouseLeave="{{ clearTip }}" x="{{ r.x }}" y="{{ r.y }}" width="{{ r.w }}" height="{{ r.h }}" fill="{{ r.color }}" style="cursor:pointer" style-hover="opacity:.75"></rect>
+</sc-for>
+</svg>
+</div>
+</div>
+<div style="flex:none;display:flex;padding-left:44px">
+<sc-for list="{{ cardXLabels }}" as="l" hint-placeholder-count="6"><span style="flex:1;text-align:center;font:400 9.5px Inter,sans-serif;color:var(--mu)">{{ l }}</span></sc-for>
+</div>
+</section>
+
+<div onMouseEnter="{{ cardTotalTip }}" onMouseLeave="{{ clearTip }}" style="background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;justify-content:center;gap:10px;min-height:0">
+<span style="font:600 11px Inter,sans-serif;color:var(--mu)">Total Card Sale</span>
+<span style="font:600 30px/1 Space Grotesk,sans-serif;letter-spacing:-.02em;color:var(--tx);font-variant-numeric:tabular-nums">₦1,246,500</span>
+<div style="display:flex;flex-direction:column;gap:6px;padding-top:10px;border-top:1px solid var(--bd)">
+<div style="display:flex;align-items:baseline;gap:8px"><span style="width:8px;height:8px;border-radius:2px;background:var(--s1)"></span><span style="font:400 10.5px Inter,sans-serif;color:var(--mu)">Annual</span><span style="margin-left:auto;font:600 11.5px Space Grotesk,sans-serif;color:var(--tx)">₦420,000</span></div>
+<div style="display:flex;align-items:baseline;gap:8px"><span style="width:8px;height:8px;border-radius:2px;background:var(--s3)"></span><span style="font:400 10.5px Inter,sans-serif;color:var(--mu)">Monthly</span><span style="margin-left:auto;font:600 11.5px Space Grotesk,sans-serif;color:var(--tx)">₦826,500</span></div>
+</div>
+</div>
+
+</div>
+</sc-if>
+
+<sc-if value="{{ isUsage }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;min-height:0;padding:12px 26px 20px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:auto minmax(0,1fr) minmax(0,1fr);gap:14px">
+
+<sc-for list="{{ usageKpis }}" as="k" hint-placeholder-count="3">
+<div onMouseEnter="{{ k.onEnter }}" onMouseLeave="{{ clearTip }}" style="background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:7px">
+<div style="display:flex;align-items:center;gap:7px">
+<span style="font:600 11px Inter,sans-serif;color:var(--mu)">{{ k.label }}</span>
+<span title="{{ k.note }}" style="width:14px;height:14px;flex:none;border-radius:50%;border:1px solid var(--bd);background:var(--chip);color:var(--mu);display:grid;place-items:center;font:600 9px Inter,sans-serif;cursor:help">i</span>
+</div>
+<span style="font:600 26px/1 Space Grotesk,sans-serif;letter-spacing:-.02em;color:var(--tx);font-variant-numeric:tabular-nums">{{ k.value }}</span>
+<span style="font:400 10px Inter,sans-serif;color:var(--mu)">{{ k.sub }}</span>
+</div>
+</sc-for>
+
+<div style="display:flex;flex-direction:column;justify-content:center;gap:7px;padding:14px 16px;border-radius:10px;background:var(--cyansoft);border:1px solid var(--bd)">
+<div style="display:flex;align-items:center;gap:7px">
+<span style="width:16px;height:16px;flex:none;border-radius:50%;background:var(--s1);color:var(--card);display:grid;place-items:center;font:600 9.5px Inter,sans-serif">i</span>
+<span style="font:600 10.5px Inter,sans-serif;color:var(--tx)">Derived from ticket payments</span>
+</div>
+<span style="font:400 10px/1.5 Inter,sans-serif;color:var(--tx);opacity:.8">Counts on this page come from Paystack ticket transactions. No gate sensor, no LPR.</span>
+</div>
+
+<section style="grid-column:span 2;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px 18px 11px;display:flex;flex-direction:column;gap:10px;min-height:0">
+<div style="flex:none;display:flex;align-items:center;gap:8px">
+<h2 style="margin:0;font:600 13.5px Space Grotesk,sans-serif;color:var(--tx)">Occupancy by Time of Day</h2>
+<span title="Ticket payments bucketed by transaction hour — a proxy for occupancy, not a sensor reading." style="width:14px;height:14px;flex:none;border-radius:50%;border:1px solid var(--bd);background:var(--chip);color:var(--mu);display:grid;place-items:center;font:600 9px Inter,sans-serif;cursor:help">i</span>
+<span style="margin-left:auto;font:400 10px Inter,sans-serif;color:var(--mu)">Average tickets per hour</span>
+</div>
+<div style="flex:1;min-height:0;display:flex;gap:9px">
+<div style="flex:none;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end">
+<sc-for list="{{ hourYLabels }}" as="l" hint-placeholder-count="5"><span style="font:400 9.5px Inter,sans-serif;color:var(--mu)">{{ l }}</span></sc-for>
+</div>
+<div style="flex:1;min-width:0;position:relative;background-image:repeating-linear-gradient(to top,var(--grid) 0 1px,transparent 1px 25%)">
+<div style="position:absolute;top:0;bottom:0;left:{{ bandLeft }};width:{{ bandWidth }};background:var(--chip)"></div>
+<svg viewBox="0 0 1000 200" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;display:block">
+<path d="{{ hourArea }}" fill="var(--cyansoft)"></path>
+<path d="{{ hourLine }}" fill="none" stroke="var(--s1)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"></path>
+<sc-for list="{{ hourHits }}" as="r" hint-placeholder-count="17">
+<rect onMouseEnter="{{ r.onEnter }}" onMouseLeave="{{ clearTip }}" x="{{ r.x }}" y="0" width="{{ r.w }}" height="200" fill="transparent" style="cursor:crosshair" style-hover="fill:rgba(33,197,240,.16)"></rect>
+</sc-for>
+</svg>
+<span style="position:absolute;top:6px;left:{{ bandLeft }};width:{{ bandWidth }};text-align:center;font:600 8.5px Inter,sans-serif;letter-spacing:.1em;color:var(--mu)">PEAK BAND</span>
+</div>
+</div>
+<div style="flex:none;display:flex;padding-left:44px">
+<sc-for list="{{ hourXLabels }}" as="l" hint-placeholder-count="9"><span style="flex:1;text-align:center;font:400 9.5px Inter,sans-serif;color:var(--mu)">{{ l }}</span></sc-for>
+</div>
+</section>
+
+<section style="background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:9px;min-height:0">
+<div style="flex:none;display:flex;align-items:center;gap:8px">
+<h2 style="margin:0;font:600 13.5px Space Grotesk,sans-serif;color:var(--tx)">Peak vs Off-Peak</h2>
+<span title="Share of ticket transactions inside the busiest contiguous hour band." style="width:14px;height:14px;flex:none;border-radius:50%;border:1px solid var(--bd);background:var(--chip);color:var(--mu);display:grid;place-items:center;font:600 9px Inter,sans-serif;cursor:help">i</span>
+</div>
+<sc-for list="{{ peakRows }}" as="p" hint-placeholder-count="2">
+<div onMouseEnter="{{ p.onEnter }}" onMouseLeave="{{ clearTip }}" style="flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:7px;padding:11px 14px;border-radius:9px;background:var(--chip);cursor:default">
+<div style="display:flex;align-items:baseline;gap:8px">
+<span style="font:600 11.5px Inter,sans-serif;color:var(--tx)">{{ p.label }}</span>
+<span style="margin-left:auto;font:500 10px Inter,sans-serif;color:var(--mu)">{{ p.band }}</span>
+</div>
+<span style="font:600 26px/1 Space Grotesk,sans-serif;color:var(--tx);font-variant-numeric:tabular-nums">{{ p.pct }}</span>
+<div style="height:5px;border-radius:3px;background:var(--grid);overflow:hidden"><div style="height:5px;border-radius:3px;background:{{ p.color }};width:{{ p.width }}"></div></div>
+</div>
+</sc-for>
+</section>
+
+<section style="background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;min-height:0">
+<div style="flex:none;display:flex;align-items:center;gap:7px">
+<h2 style="margin:0;font:600 13.5px Space Grotesk,sans-serif;color:var(--tx)">Vehicle Type Distribution</h2>
+<span title="Vehicle type is inferred from the ticket fee tier paid, not from a camera. Hover a segment for detail." style="width:14px;height:14px;flex:none;border-radius:50%;border:1px solid var(--bd);background:var(--chip);color:var(--mu);display:grid;place-items:center;font:600 9px Inter,sans-serif;cursor:help">i</span>
+</div>
+<div style="flex:1;min-height:0;display:flex;align-items:center;justify-content:center">
+<svg viewBox="0 0 120 120" style="height:100%;width:auto;display:block">
+<sc-for list="{{ vehicleArcs }}" as="a" hint-placeholder-count="4">
+<circle onMouseEnter="{{ a.onEnter }}" onMouseLeave="{{ clearTip }}" cx="60" cy="60" r="45" fill="none" stroke="{{ a.color }}" stroke-width="20" stroke-dasharray="{{ a.dash }}" stroke-dashoffset="{{ a.offset }}" transform="rotate(-90 60 60)" style="cursor:pointer"></circle>
+</sc-for>
+<text x="60" y="58" text-anchor="middle" style="font:600 15px Space Grotesk,sans-serif;fill:var(--tx)">33,192</text>
+<text x="60" y="70" text-anchor="middle" style="font:400 6.5px Inter,sans-serif;fill:var(--mu);letter-spacing:.12em">TICKETS</text>
+</svg>
+</div>
+</section>
+
+<section style="grid-column:span 2;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px 18px 11px;display:flex;flex-direction:column;gap:10px;min-height:0">
+<div style="flex:none;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+<h2 style="margin:0;font:600 13.5px Space Grotesk,sans-serif;color:var(--tx)">Daily Ticket Collection</h2>
+<span style="font:400 10.5px Inter,sans-serif;color:var(--mu)">Stacked by fee tier</span>
+<div style="margin-left:auto;display:flex;gap:11px;flex-wrap:wrap">
+<sc-for list="{{ tierLegend }}" as="t" hint-placeholder-count="5">
+<span style="display:flex;align-items:center;gap:5px;font:500 9.5px Inter,sans-serif;color:var(--mu)"><span style="width:9px;height:9px;border-radius:2px;background:{{ t.color }}"></span>{{ t.name }}</span>
+</sc-for>
+</div>
+</div>
+<div style="flex:1;min-height:0;display:flex;gap:9px">
+<div style="flex:none;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end">
+<sc-for list="{{ tierYLabels }}" as="l" hint-placeholder-count="5"><span style="font:400 9.5px Inter,sans-serif;color:var(--mu)">{{ l }}</span></sc-for>
+</div>
+<div style="flex:1;min-width:0;position:relative;background-image:repeating-linear-gradient(to top,var(--grid) 0 1px,transparent 1px 25%)">
+<svg viewBox="0 0 1000 200" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;display:block">
+<sc-for list="{{ tierRects }}" as="r" hint-placeholder-count="60">
+<rect onMouseEnter="{{ r.onEnter }}" onMouseLeave="{{ clearTip }}" x="{{ r.x }}" y="{{ r.y }}" width="{{ r.w }}" height="{{ r.h }}" fill="{{ r.color }}" style="cursor:pointer" style-hover="opacity:.7"></rect>
+</sc-for>
+</svg>
+</div>
+</div>
+<div style="flex:none;display:flex;padding-left:44px">
+<sc-for list="{{ tierXLabels }}" as="l" hint-placeholder-count="12"><span style="flex:1;text-align:center;font:400 9px Inter,sans-serif;color:var(--mu)">{{ l }}</span></sc-for>
+</div>
+</section>
+
+<section style="grid-column:span 2;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px 18px;display:flex;flex-direction:column;gap:9px;min-height:0">
+<div style="flex:none;display:flex;align-items:center;gap:8px">
+<h2 style="margin:0;font:600 13.5px Space Grotesk,sans-serif;color:var(--tx)">Weekly Occupancy Pattern</h2>
+<span title="Ticket transactions grouped by day of week over the selected range." style="width:14px;height:14px;flex:none;border-radius:50%;border:1px solid var(--bd);background:var(--chip);color:var(--mu);display:grid;place-items:center;font:600 9px Inter,sans-serif;cursor:help">i</span>
+<span style="margin-left:auto;font:400 10px Inter,sans-serif;color:var(--mu)">Sunday closure is expected — a 6-day trading week</span>
+</div>
+<div style="flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-between">
+<sc-for list="{{ weekRows }}" as="d" hint-placeholder-count="7">
+<div onMouseEnter="{{ d.onEnter }}" onMouseLeave="{{ clearTip }}" style="display:flex;align-items:center;gap:12px;cursor:default">
+<span style="font:500 11px Inter,sans-serif;color:var(--mu);width:72px;flex:none">{{ d.day }}</span>
+<div style="flex:1;height:16px;background:var(--chip);border-radius:3px;overflow:hidden"><div style="height:16px;border-radius:3px;background:{{ d.color }};width:{{ d.width }}"></div></div>
+<span style="font:600 11.5px Space Grotesk,sans-serif;color:var(--tx);width:44px;text-align:right;font-variant-numeric:tabular-nums">{{ d.count }}</span>
+</div>
+</sc-for>
+</div>
+</section>
+
+</div>
+</sc-if>
+
+<sc-if value="{{ tipShow }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;left:{{ tipX }};top:{{ tipY }};transform:translate(-50%,-100%);pointer-events:none;z-index:40;min-width:132px;padding:9px 11px;border-radius:8px;background:var(--tipbg);color:var(--tiptx);box-shadow:0 6px 20px rgba(8,14,38,.28);display:flex;flex-direction:column;gap:6px">
+<span style="font:600 10.5px Inter,sans-serif;opacity:.95">{{ tipTitle }}</span>
+<sc-for list="{{ tipLines }}" as="l" hint-placeholder-count="2">
+<div style="display:flex;align-items:baseline;gap:12px">
+<span style="font:400 10px Inter,sans-serif;opacity:.7">{{ l.label }}</span>
+<span style="margin-left:auto;font:600 11px Space Grotesk,sans-serif;font-variant-numeric:tabular-nums">{{ l.value }}</span>
+</div>
+</sc-for>
+<sc-if value="{{ tipNote }}" hint-placeholder-val="{{ false }}">
+<span style="font:400 9px/1.4 Inter,sans-serif;opacity:.6;max-width:170px">{{ tipNote }}</span>
+</sc-if>
+</div>
+</sc-if>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light'|'dark'&quot;,&quot;section&quot;:&quot;Shell&quot;},&quot;page&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;overview&quot;,&quot;usage&quot;],&quot;default&quot;:&quot;overview&quot;,&quot;tsType&quot;:&quot;'overview'|'usage'&quot;,&quot;section&quot;:&quot;Shell&quot;}}">
+class Component extends DCLogic {
+  state = { page: "overview", theme: "light", scale: 1, tip: null };
+  stageRef = React.createRef();
+
+  componentDidMount() {
+    this.fit = () => {
+      const el = this.stageRef.current;
+      if (!el) return;
+      const s = Math.min(el.clientWidth / 1440, el.clientHeight / 900);
+      this.setState({ scale: Math.max(0.2, Math.min(1, s)) });
+    };
+    this.fit();
+    this.ro = new ResizeObserver(this.fit);
+    this.ro.observe(this.stageRef.current);
+  }
+  componentWillUnmount() { if (this.ro) this.ro.disconnect(); }
+
+  tip(title, lines, note) {
+    return (e) => {
+      const stage = this.stageRef.current;
+      if (!stage) return;
+      const sr = stage.getBoundingClientRect();
+      const canvas = stage.firstElementChild.getBoundingClientRect();
+      const sc = this.state.scale || 1;
+      const r = e.currentTarget.getBoundingClientRect();
+      const x = (r.left + r.width / 2 - canvas.left) / sc;
+      const y = (r.top - canvas.top) / sc - 8;
+      this.setState({ tip: { title, lines, note, x: Math.max(90, Math.min(1350, x)), y: Math.max(60, y) } });
+    };
+  }
+
+  fmt(n) { return n.toLocaleString("en-NG"); }
+  naira(n) { return "₦" + Math.round(n).toLocaleString("en-NG"); }
+
+  smooth(vals, W, H) {
+    const n = vals.length, max = Math.max(...vals);
+    const pts = vals.map((v, i) => [(i / (n - 1)) * W, (1 - v / max) * H]);
+    let d = `M${pts[0][0]},${pts[0][1]}`;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || pts[i + 1];
+      const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+      const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+      d += ` C${c1[0]},${c1[1]} ${c2[0]},${c2[1]} ${p2[0]},${p2[1]}`;
+    }
+    return { line: d, area: `${d} L${W},${H} L0,${H} Z`, max };
+  }
+
+  yLabels(max, steps, fmt) {
+    const out = [];
+    for (let i = steps; i >= 0; i--) out.push(fmt((max / steps) * i));
+    return out;
+  }
+
+  renderVals() {
+    const s = this.state, dark = s.theme === "dark";
+    const ov = s.page === "overview";
+    const ON = "#21c5f0", ONTX = "#0b1230", OFFTX = "var(--navtx)";
+    const clearTip = () => this.setState({ tip: null });
+
+    // ---- Revenue trend
+    const trendDates = ["12/05","13/05","14/05","15/05","16/05","17/05","18/05","19/05","20/05","21/05","22/05","23/05","24/05","25/05","26/05","27/05","28/05","29/05","30/05","31/05","01/06","02/06","03/06","04/06","05/06","06/06","07/06","08/06","09/06","10/06"];
+    const trend = [62000,148000,131000,120000,52000,146000,96000,142000,128000,89000,64000,74000,112000,58000,49000,96000,158000,88000,132000,120000,101000,84000,138000,64000,118000,142000,76000,109000,96000,131000];
+    const t = this.smooth(trend, 1000, 200);
+    const step = 1000 / trend.length;
+    const trendHits = trend.map((v, i) => ({
+      x: i * step, w: step,
+      onEnter: this.tip(trendDates[i] + " · 2026", [
+        { label: "Total collection", value: this.naira(v) },
+        { label: "Tickets", value: this.naira(v * 0.974) },
+        { label: "Cards", value: this.naira(v * 0.026) },
+      ]),
+    }));
+
+    // ---- Occupancy by hour
+    const hourNames = ["6AM","7AM","8AM","9AM","10AM","11AM","12PM","1PM","2PM","3PM","4PM","5PM","6PM","7PM","8PM","9PM","10PM"];
+    const hv = [20,180,900,2400,4050,4300,4180,3900,3600,3500,3450,3700,3400,1500,250,40,10];
+    const h = this.smooth(hv, 1000, 200);
+    const hStep = 1000 / hv.length;
+    const hourTotal = hv.reduce((a, b) => a + b, 0);
+    const hourHits = hv.map((v, i) => ({
+      x: i * hStep, w: hStep,
+      onEnter: this.tip(hourNames[i], [
+        { label: "Tickets", value: this.fmt(v) },
+        { label: "Share of day", value: ((v / hourTotal) * 100).toFixed(1) + "%" },
+      ], "Derived from ticket payments, not sensors"),
+    }));
+
+    // ---- Card sales
+    const weeks = ["W19","W20","W21","W22","W23","W24"];
+    const annual = [420000,315000,472500,367500,525000,231000];
+    const monthly = [96000,124000,88000,140000,112000,74000];
+    const cMax = 600000, cRects = [];
+    weeks.forEach((w, i) => {
+      const gx = 12 + i * 91;
+      [["Annual cards", annual[i], "var(--s1)", 0, 10500], ["Monthly cards", monthly[i], "var(--s3)", 34, 2000]].forEach(([name, v, color, dx, price]) => {
+        const hh = (v / cMax) * 200;
+        cRects.push({
+          x: gx + dx, y: 200 - hh, w: 30, h: hh, color,
+          onEnter: this.tip(`${w} · ${name}`, [
+            { label: "Amount", value: this.naira(v) },
+            { label: "Cards sold", value: this.fmt(Math.round(v / price)) },
+          ]),
+        });
+      });
+    });
+
+    // ---- Daily ticket collection by tier
+    const tiers = [
+      { name: "Porter ₦100", color: "var(--s4)", price: 100 },
+      { name: "Car ₦300", color: "var(--s3)", price: 300 },
+      { name: "Pickup ₦600", color: "var(--s2)", price: 600 },
+      { name: "Dyna ₦1,200", color: "var(--s1)", price: 1200 },
+      { name: "Trailer ₦3,000", color: "var(--s5)", price: 3000 },
+    ];
+    const days = ["30/05","31/05","01/06","02/06","03/06","04/06","05/06","06/06","07/06","08/06","09/06","10/06"];
+    const stacks = [
+      [3200,842000,74400,38400,15000],[2900,915000,66600,44400,12000],[4100,978000,81000,50400,21000],
+      [3600,864000,70200,32400,9000],[2700,792000,63000,40800,18000],[4400,1002000,86400,54000,24000],
+      [3100,738000,58800,36000,12000],[2500,681000,52200,28800,6000],[3800,930000,77400,46800,15000],
+      [4600,1044000,90000,57600,27000],[3300,876000,69000,42000,18000],[2800,801000,61200,33600,12000],
+    ];
+    const tMax = 1300000, tRects = [];
+    stacks.forEach((seg, i) => {
+      const st = 1000 / stacks.length, x = i * st + st * 0.22;
+      const dayTotal = seg.reduce((a, b) => a + b, 0);
+      let y = 200;
+      seg.forEach((v, k) => {
+        const hh = (v / tMax) * 200;
+        y -= hh;
+        tRects.push({
+          x, y, w: st * 0.56, h: hh, color: tiers[k].color,
+          onEnter: this.tip(`${days[i]} · ${tiers[k].name}`, [
+            { label: "Collected", value: this.naira(v) },
+            { label: "Tickets", value: this.fmt(Math.round(v / tiers[k].price)) },
+            { label: "Day total", value: this.naira(dayTotal) },
+          ]),
+        });
+      });
+    });
+
+    // ---- Vehicle distribution donut
+    const veh = [
+      { name: "Car", tier: "₦300 tier", count: 31314, color: "var(--s1)" },
+      { name: "Minibus", tier: "₦600 tier", count: 1532, color: "var(--s2)" },
+      { name: "SUV", tier: "₦300 tier", count: 227, color: "var(--s3)" },
+      { name: "Lorry Truck", tier: "₦2,000 tier", count: 119, color: "var(--s4)" },
+    ];
+    const vTotal = veh.reduce((a, b) => a + b.count, 0), C = 2 * Math.PI * 45;
+    let acc = 0;
+    const vehicleArcs = veh.map(v => {
+      const len = (v.count / vTotal) * C;
+      const p = (v.count / vTotal) * 100;
+      const arc = {
+        color: v.color, dash: `${len} ${C - len}`, offset: -acc,
+        onEnter: this.tip(v.name, [
+          { label: "Tickets", value: this.fmt(v.count) },
+          { label: "Share", value: (p < 1 ? p.toFixed(1) : p.toFixed(0)) + "%" },
+          { label: "Fee tier", value: v.tier },
+        ], "Type inferred from fee tier paid"),
+      };
+      acc += len;
+      return arc;
+    });
+
+    // ---- AICL / GSDS
+    const totalCollection = 48672300;
+    const splitDefs = [
+      { name: "AICL", pct: 68.4, color: "var(--s1)" },
+      { name: "GSDS", pct: 31.6, color: "var(--s3)" },
+    ];
+    let sacc = 0;
+    const splitArcs = splitDefs.map(d => {
+      const len = (d.pct / 100) * C;
+      const arc = {
+        color: d.color, dash: `${len} ${C - len}`, offset: -sacc,
+        onEnter: this.tip(d.name, [
+          { label: "Amount", value: this.naira(totalCollection * d.pct / 100) },
+          { label: "Share", value: d.pct + "%" },
+        ]),
+      };
+      sacc += len;
+      return arc;
+    });
+
+    const tip = s.tip;
+
+    return {
+      theme: s.theme,
+      stageRef: this.stageRef,
+      scale: s.scale,
+      themeLabel: dark ? "☀ Light" : "☾ Dark",
+      isOverview: ov, isUsage: !ov,
+      pageTitle: ov ? "Overview · Revenue" : "Occupancy & Traffic",
+      pageTag: ov ? "Money" : "Usage & volume",
+      toggleTheme: () => this.setState({ theme: dark ? "light" : "dark" }),
+      goOverview: () => this.setState({ page: "overview", tip: null }),
+      goUsage: () => this.setState({ page: "usage", tip: null }),
+      clearTip,
+      pillOvBg: ov ? ON : "transparent", pillOvTx: ov ? ONTX : OFFTX,
+      pillUsBg: ov ? "transparent" : ON, pillUsTx: ov ? OFFTX : ONTX,
+
+      tipShow: !!tip,
+      tipTitle: tip ? tip.title : "",
+      tipLines: tip ? tip.lines : [],
+      tipNote: tip && tip.note ? tip.note : false,
+      tipX: tip ? tip.x + "px" : "0px",
+      tipY: tip ? tip.y + "px" : "0px",
+
+      overviewKpis: [
+        { label: "Daily Revenue", window: "Today · 14 Jun 2026", value: "₦2,018,700", delta: "+6.4%", deltaColor: "var(--navy2)", onEnter: this.tip("Daily Revenue", [{ label: "Today", value: "₦2,018,700" }, { label: "Yesterday", value: "₦1,897,200" }, { label: "Transactions", value: "1,486" }]) },
+        { label: "Weekly Revenue", window: "Trailing 7 days", value: "₦12,431,500", delta: "+2.1%", deltaColor: "var(--navy2)", onEnter: this.tip("Weekly Revenue", [{ label: "8 – 14 Jun", value: "₦12,431,500" }, { label: "Previous 7 days", value: "₦12,175,900" }, { label: "Daily average", value: "₦1,775,929" }]) },
+        { label: "Monthly Revenue", window: "Trailing 30 days", value: "₦48,672,300", delta: "−1.8%", deltaColor: "var(--acc)", onEnter: this.tip("Monthly Revenue", [{ label: "16 May – 14 Jun", value: "₦48,672,300" }, { label: "Previous 30 days", value: "₦49,565,100" }, { label: "Daily average", value: "₦1,622,410" }]) },
+        { label: "Total Collection", window: "Selected range · 44 days", value: "₦48,672,300", delta: "Range", deltaColor: "var(--mu)", onEnter: this.tip("Total Collection", [{ label: "Tickets", value: "₦47,425,800" }, { label: "Cards", value: "₦1,246,500" }, { label: "Transactions", value: "33,855" }], "2 May – 14 Jun 2026") },
+      ],
+      usageKpis: [
+        { label: "Entry Count", value: "33,202", sub: "Ticket transactions in range", note: "Derived from ticket payments. Counts paid tickets, not gate entries.", onEnter: this.tip("Entry Count", [{ label: "Tickets", value: "33,202" }, { label: "Daily average", value: "755" }, { label: "Basis", value: "Ticket-only" }], "Derived from ticket payments, not gate sensors") },
+        { label: "Total Vehicles Today", value: "1,486", sub: "Today · 14 Jun 2026", note: "Derived from ticket payments recorded today. No sensor or LPR feed.", onEnter: this.tip("Total Vehicles Today", [{ label: "Tickets today", value: "1,486" }, { label: "Same day last week", value: "1,402" }], "One paid ticket counts as one vehicle") },
+        { label: "Peak Hours Count", value: "12,580", sub: "Inside the 10AM – 1PM band", note: "Derived from ticket payments falling in the busiest three-hour band.", onEnter: this.tip("Peak Hours Count", [{ label: "Band", value: "10AM – 1PM" }, { label: "Tickets", value: "12,580" }, { label: "Share", value: "76.92%" }], "Shares data with Peak vs Off-Peak") },
+      ],
+      peakRows: [
+        { label: "Peak hours", band: "10AM – 1PM", pct: "76.92%", color: "var(--s1)", width: "76.92%", onEnter: this.tip("Peak hours", [{ label: "Band", value: "10AM – 1PM" }, { label: "Tickets", value: "25,538" }, { label: "Share", value: "76.92%" }]) },
+        { label: "Off-peak hours", band: "7PM – 6AM", pct: "5.41%", color: "var(--s3)", width: "5.41%", onEnter: this.tip("Off-peak hours", [{ label: "Band", value: "7PM – 6AM" }, { label: "Tickets", value: "1,796" }, { label: "Share", value: "5.41%" }]) },
+      ],
+      weekRows: [
+        { day: "Monday", n: 5759, width: "89%", color: "var(--s3)" },
+        { day: "Tuesday", n: 5903, width: "91%", color: "var(--s3)" },
+        { day: "Wednesday", n: 5490, width: "85%", color: "var(--s3)" },
+        { day: "Thursday", n: 4911, width: "76%", color: "var(--s3)" },
+        { day: "Friday", n: 6450, width: "100%", color: "var(--s1)" },
+        { day: "Saturday", n: 4309, width: "67%", color: "var(--s3)" },
+        { day: "Sunday", n: 380, width: "6%", color: "var(--grid)" },
+      ].map(d => ({
+        day: d.day, count: this.fmt(d.n), width: d.width, color: d.color,
+        onEnter: this.tip(d.day, [
+          { label: "Tickets", value: this.fmt(d.n) },
+          { label: "Share of week", value: ((d.n / 33202) * 100).toFixed(1) + "%" },
+        ], "Derived from ticket payments"),
+      })),
+
+      cardTotalTip: this.tip("Total Card Sale", [
+        { label: "Annual (₦10,500)", value: "₦420,000 · 40" },
+        { label: "Monthly (₦2,000)", value: "₦826,500 · 413" },
+        { label: "Total", value: "₦1,246,500" },
+      ], "₦12,500 bundles split across both sub-types"),
+
+      trendLine: t.line, trendArea: t.area, trendHits,
+      trendYLabels: this.yLabels(t.max, 4, v => v === 0 ? "0" : "₦" + Math.round(v / 1000) + "k"),
+      trendXLabels: ["12/05","15/05","18/05","21/05","24/05","27/05","30/05","02/06","05/06","08/06","10/06"],
+
+      hourLine: h.line, hourArea: h.area, hourHits,
+      hourYLabels: this.yLabels(h.max, 4, v => v === 0 ? "0" : this.fmt(Math.round(v / 100) * 100)),
+      hourXLabels: ["6AM","8AM","10AM","12PM","2PM","4PM","6PM","8PM","10PM"],
+      bandLeft: (4 / 16) * 100 + "%", bandWidth: (3 / 16) * 100 + "%",
+
+      cardRects: cRects, cardXLabels: weeks,
+      cardYLabels: this.yLabels(cMax, 3, v => v === 0 ? "0" : "₦" + Math.round(v / 1000) + "k"),
+
+      tierRects: tRects, tierLegend: tiers, tierXLabels: days,
+      tierYLabels: this.yLabels(tMax, 4, v => v === 0 ? "0" : "₦" + (v / 1000000).toFixed(2) + "m"),
+
+      vehicleArcs, splitArcs,
+    };
+  }
+}
+</script>
+</body>
+</html>

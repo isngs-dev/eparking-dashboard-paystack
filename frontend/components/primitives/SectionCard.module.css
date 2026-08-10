@@ -1,0 +1,49 @@
+.section {
+  padding: 14px 18px 11px;
+  gap: 10px;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.titleGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-family: var(--font-space-grotesk), "Space Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--tx);
+}
+
+.subtitle {
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-weight: 400;
+  font-size: 10.5px;
+  color: var(--mu);
+}
+
+.infoIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 1px solid var(--bd);
+  background: var(--chip);
+  color: var(--mu);
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-size: 9.5px;
+  font-weight: 600;
+  cursor: help;
+  flex-shrink: 0;
+}

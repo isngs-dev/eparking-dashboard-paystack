@@ -1,0 +1,141 @@
+.navbar {
+  height: 56px;
+  background: var(--navbg);
+  padding: 0 26px;
+  display: flex;
+  align-items: center;
+  gap: 26px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brandLogo {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  object-fit: contain;
+  flex-shrink: 0;
+  /* Hairline ring: the AICL asset is navy-on-navy against var(--navbg),
+     so it needs a subtle edge to read as a distinct badge. */
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.brandName {
+  font-family: var(--font-space-grotesk), "Space Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.brandSub {
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  font-style: italic;
+  color: var(--navtx);
+  white-space: nowrap;
+}
+
+.pills {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+  padding: 3px;
+}
+
+.pill {
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--navtx);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.pillActive {
+  background: var(--cyan);
+  color: #0b1230;
+}
+
+.actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.avatar {
+  width: 29px;
+  height: 29px;
+  border-radius: 999px;
+  background: var(--navy2);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.userChip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.userMeta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.userName {
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.userRole {
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--navtx);
+  white-space: nowrap;
+}
+
+.logoutButton {
+  border: none;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--navtx);
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 999px;
+  padding: 7px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.logoutButton:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}

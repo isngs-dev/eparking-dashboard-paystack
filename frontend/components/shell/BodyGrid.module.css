@@ -1,0 +1,26 @@
+.grid {
+  padding: 12px 26px 20px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  /*
+   * Row 1 (KPI cards) stays content-sized (`auto`) -- KPI cards are naturally
+   * short and should not stretch.
+   *
+   * Rows 2-3 (chart cards) must have a hard ceiling, not an unbounded `1fr`.
+   * Sprint 6 dropped the mock's fixed 1440x900 `transform:scale()` canvas in
+   * favor of a natural-height, normally-scrolling page (see
+   * .claude/sprints/06_FRONTEND.md). On a scrolling page `1fr` has no
+   * containing-block ceiling to size against, so a flex/percentage chain
+   * inside the row (chartArea `flex:1` -> svg `height:calc(100% - 18px)`)
+   * inflates without bound.
+   *
+   * The original mock's 1440x900 canvas implies ~287px per chart row here:
+   *   900 (canvas) - 56 (navbar) - 44 (page header) - 65 (filter bar)
+   *     - 32 (grid vertical padding) - 28 (2 row gaps @ 14px)
+   *     - 100 (KPI row) = 575, split across 2 rows = ~287.5px each.
+   * minmax(280px, 320px) keeps that same footprint (with a little slack)
+   * while capping growth instead of leaving it open-ended.
+   */
+  grid-template-rows: auto minmax(280px, 320px) minmax(280px, 320px);
+  gap: 14px;
+}

@@ -1,0 +1,16 @@
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 1px solid var(--bd);
+  background: var(--chip);
+  color: var(--mu);
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-size: 9.5px;
+  font-weight: 600;
+  cursor: help;
+  flex-shrink: 0;
+}

@@ -1,0 +1,7 @@
+.footnote {
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-size: 9px;
+  font-style: italic;
+  color: var(--mu);
+  margin: 0;
+}

@@ -1,0 +1,46 @@
+@import "./tokens.css";
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  background: var(--bg);
+  color: var(--tx);
+  min-width: 1280px;
+}
+
+body {
+  font-family: var(--font-inter), Inter, system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-space-grotesk), "Space Grotesk", system-ui, sans-serif;
+  margin: 0;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+button,
+input,
+select {
+  font-family: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+.stage {
+  max-width: 1600px;
+  min-width: 1280px;
+  margin: 0 auto;
+}

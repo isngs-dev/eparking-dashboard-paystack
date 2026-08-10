@@ -1,0 +1,50 @@
+.tooltip {
+  position: fixed;
+  z-index: 1000;
+  background: var(--tipbg);
+  color: var(--tiptx);
+  border-radius: 8px;
+  padding: 9px 11px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+  min-width: 160px;
+  max-width: 260px;
+}
+
+.title {
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-weight: 600;
+  font-size: 10.5px;
+  margin-bottom: 6px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 2px 0;
+}
+
+.label {
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-weight: 400;
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+.value {
+  font-family: var(--font-space-grotesk), "Space Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.note {
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-weight: 400;
+  font-size: 9px;
+  opacity: 0.6;
+  margin-top: 6px;
+  line-height: 1.4;
+}
