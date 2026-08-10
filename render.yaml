@@ -1,7 +1,12 @@
 services:
-  - type: redis
+  - type: keyvalue
     name: eparking-redis
     plan: free
+    # Empty allow list = no public/external access. Render services in the
+    # same region (eparking-api/worker/beat below) always reach this over
+    # the private network via its internal URL regardless of this list --
+    # see https://render.com/docs/key-value. Internal-URL connections are
+    # unauthenticated by default, so REDIS_PASSWORD below is left blank.
     ipAllowList: []
 
   - type: web
@@ -48,15 +53,9 @@ services:
       - key: CORS_ORIGINS
         sync: false
       - key: REDIS_HOST
-        fromService:
-          type: redis
-          name: eparking-redis
-          property: host
+        sync: false
       - key: REDIS_PORT
-        fromService:
-          type: redis
-          name: eparking-redis
-          property: port
+        sync: false
       - key: REDIS_DB
         value: 0
       - key: REDIS_PASSWORD
@@ -98,15 +97,9 @@ services:
       - key: VIEWER_API_KEY
         sync: false
       - key: REDIS_HOST
-        fromService:
-          type: redis
-          name: eparking-redis
-          property: host
+        sync: false
       - key: REDIS_PORT
-        fromService:
-          type: redis
-          name: eparking-redis
-          property: port
+        sync: false
       - key: REDIS_DB
         value: 0
       - key: REDIS_PASSWORD
@@ -147,15 +140,9 @@ services:
       - key: VIEWER_API_KEY
         sync: false
       - key: REDIS_HOST
-        fromService:
-          type: redis
-          name: eparking-redis
-          property: host
+        sync: false
       - key: REDIS_PORT
-        fromService:
-          type: redis
-          name: eparking-redis
-          property: port
+        sync: false
       - key: REDIS_DB
         value: 0
       - key: REDIS_PASSWORD
