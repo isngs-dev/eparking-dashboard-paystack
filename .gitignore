@@ -218,3 +218,6 @@ __marimo__/
 .streamlit/secrets.toml
 .claude/
 CLAUDE.md
+
+# Deployment reference containing real secret values
+deploy/RENDER_DEPLOYMENT.md
