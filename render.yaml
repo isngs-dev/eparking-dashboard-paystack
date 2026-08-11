@@ -60,7 +60,6 @@ services:
         value: 0
       - key: REDIS_PASSWORD
         sync: false
-    preDeployCommand: python -m app.migrate
 
   - type: worker
     name: eparking-worker
@@ -69,6 +68,7 @@ services:
     dockerContext: .
     dockerCommand: celery -A app.celery_app worker --loglevel=INFO
     plan: starter
+    preDeployCommand: python -m app.migrate
     envVars:
       - key: APP_ENV
         value: production
@@ -95,6 +95,10 @@ services:
       - key: ADMIN_API_KEY
         sync: false
       - key: VIEWER_API_KEY
+        sync: false
+      - key: SESSION_COOKIE_SECURE
+        value: true
+      - key: CORS_ORIGINS
         sync: false
       - key: REDIS_HOST
         sync: false
@@ -139,6 +143,10 @@ services:
         sync: false
       - key: VIEWER_API_KEY
         sync: false
+      - key: SESSION_COOKIE_SECURE
+        value: true
+      - key: CORS_ORIGINS
+        sync: false
       - key: REDIS_HOST
         sync: false
       - key: REDIS_PORT
@@ -152,7 +160,7 @@ services:
     name: eparking-frontend
     runtime: node
     rootDir: frontend
-    buildCommand: npm run build
+    buildCommand: npm install && npm run build
     startCommand: npm run start
     plan: starter
     envVars:
