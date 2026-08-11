@@ -1,6 +1,7 @@
 services:
   - type: keyvalue
     name: eparking-redis
+    region: frankfurt
     plan: free
     # Empty allow list = no public/external access. Render services in the
     # same region (eparking-api/worker/beat below) always reach this over
@@ -12,6 +13,7 @@ services:
   - type: web
     name: eparking-api
     runtime: docker
+    region: frankfurt
     dockerfilePath: services/api/Dockerfile
     dockerContext: .
     plan: starter
@@ -64,6 +66,7 @@ services:
   - type: worker
     name: eparking-worker
     runtime: docker
+    region: frankfurt
     dockerfilePath: services/ingestion/Dockerfile
     dockerContext: .
     dockerCommand: celery -A app.celery_app worker --loglevel=INFO
@@ -112,6 +115,7 @@ services:
   - type: worker
     name: eparking-beat
     runtime: docker
+    region: frankfurt
     dockerfilePath: services/ingestion/Dockerfile
     dockerContext: .
     dockerCommand: celery -A app.celery_app beat --loglevel=INFO
@@ -159,6 +163,7 @@ services:
   - type: web
     name: eparking-frontend
     runtime: node
+    region: frankfurt
     rootDir: frontend
     buildCommand: npm install && npm run build
     startCommand: npm run start
