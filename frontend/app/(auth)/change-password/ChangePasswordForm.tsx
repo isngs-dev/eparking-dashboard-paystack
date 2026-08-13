@@ -14,12 +14,7 @@ function SubmitButton() {
   );
 }
 
-/**
- * Minimal change-password form (Phase 3 scope -- just enough that the
- * post-login `must_change_password` redirect has somewhere to land and
- * genuinely works end-to-end). No two-panel design treatment; that's not
- * required for this stub per the sprint task.
- */
+/** Voluntary password-change form for an authenticated user. */
 export function ChangePasswordForm() {
   const [state, formAction] = useFormState(changePasswordAction, initialChangePasswordState);
 

@@ -15,11 +15,6 @@ import { FloatingBrandBadge } from "@/components/shell/FloatingBrandBadge";
  * comment in `middleware.ts` and Sprint 09 §13 Risk 1 for the same warning
  * from the other side.
  *
- * Also enforces the `must_change_password` flow: a user who hasn't yet
- * changed their admin-issued initial password is redirected to
- * `/change-password` before any dashboard route renders, regardless of
- * which dashboard URL they requested.
- *
  * The navbar now lives here rather than in the root layout + a client-side
  * `ConditionalNavbar` pathname check. Now that a real `(dashboard)` vs
  * `(auth)` route-group boundary exists, this is the more correct home for
@@ -33,10 +28,6 @@ export default async function DashboardLayout({ children }: { children: ReactNod
 
   if (!user) {
     redirect("/login");
-  }
-
-  if (user.must_change_password) {
-    redirect("/change-password");
   }
 
   return (

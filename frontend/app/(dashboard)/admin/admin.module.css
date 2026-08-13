@@ -1,0 +1,220 @@
+.stage {
+  width: min(1500px, calc(100% - 48px));
+  margin: 0 auto 32px;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 16px;
+}
+
+.panel {
+  background: var(--card);
+  border: 1px solid var(--bd);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.panelHeader {
+  min-height: 48px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--bd);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.panelHeader h2 {
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.panelHeader span {
+  color: var(--mu);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.createForm {
+  padding: 16px;
+  display: grid;
+  gap: 14px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.field label {
+  color: var(--mu);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.field input,
+.field select,
+.userRow input,
+.userRow select {
+  width: 100%;
+  height: 36px;
+  border: 1px solid var(--bd);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--tx);
+  padding: 0 10px;
+  font-size: 13px;
+}
+
+.primaryButton,
+.secondaryButton {
+  height: 34px;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.primaryButton {
+  background: var(--cyan);
+  color: #0b1230;
+}
+
+.secondaryButton {
+  background: var(--chip);
+  color: var(--tx);
+  padding: 0 12px;
+}
+
+.primaryButton:disabled,
+.secondaryButton:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.table {
+  display: grid;
+}
+
+.headerRow,
+.userRow {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.2fr) 100px 120px 100px minmax(130px, 0.7fr) minmax(300px, 1.2fr);
+  gap: 10px;
+  align-items: center;
+  padding: 10px 16px;
+}
+
+.headerRow {
+  background: var(--chip);
+  color: var(--mu);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.userRow {
+  border-top: 1px solid var(--bd);
+}
+
+.userRow:first-of-type {
+  border-top: 0;
+}
+
+.rowEdit {
+  display: contents;
+}
+
+.identityCell,
+.dateCell {
+  display: grid;
+  gap: 5px;
+}
+
+.identityCell span,
+.dateCell span {
+  color: var(--mu);
+  font-size: 12px;
+}
+
+.dateCell strong {
+  color: var(--acc);
+  font-size: 11px;
+}
+
+.actionCell {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.passwordEditor {
+  flex: 1;
+}
+
+.passwordEditor summary {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  color: var(--tx);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.passwordAction {
+  margin-top: 8px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px 8px;
+}
+
+.passwordAction label {
+  color: var(--mu);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.passwordAction input {
+  min-width: 0;
+}
+
+.passwordAction button,
+.passwordAction .successBox,
+.passwordAction .errorBox {
+  grid-column: 1 / -1;
+}
+
+.passwordHint {
+  margin: -5px 0 0;
+  color: var(--mu);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.successBox,
+.errorBox {
+  border-radius: 6px;
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.successBox {
+  background: var(--cyansoft);
+  color: var(--tx);
+}
+
+.errorBox {
+  background: rgba(255, 104, 44, 0.12);
+  color: var(--tx);
+}
+
+.successBox p,
+.errorBox p {
+  margin: 0;
+}

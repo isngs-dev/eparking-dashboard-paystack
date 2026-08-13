@@ -44,13 +44,5 @@ export async function loginAction(_prevState: LoginFormState, formData: FormData
     }
   }
 
-  // must_change_password enforcement (forcing the redirect target, blocking
-  // dashboard access until changed) is Phase 4 scope per the sprint's
-  // layout-level check. For Phase 3 we still route the user to the right
-  // place immediately after login so the loop is complete end-to-end.
-  if (result.mustChangePassword) {
-    redirect("/change-password");
-  }
-
   redirect("/");
 }

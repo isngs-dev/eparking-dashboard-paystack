@@ -83,7 +83,7 @@ async def create_admin(
             INSERT INTO eparking.users
                 (email, hashed_password, role, display_name, organization,
                  must_change_password)
-            VALUES (lower($1), $2, $3, $4, $5, TRUE)
+            VALUES (lower($1), $2, $3, $4, $5, FALSE)
             RETURNING id
             """,
             email,

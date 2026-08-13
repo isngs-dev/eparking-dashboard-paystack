@@ -393,11 +393,11 @@ class UserCreateRequest(BaseModel):
     display_name: str
     role: str
     organization: str | None = None
+    password: str
 
 
 class UserCreateResponse(BaseModel):
     user: dict
-    initial_password: str
 
 
 class UserUpdateRequest(BaseModel):
@@ -405,11 +405,14 @@ class UserUpdateRequest(BaseModel):
     display_name: str | None = None
     organization: str | None = None
     is_active: bool | None = None
-    must_change_password: bool | None = None
 
 
 class UserUpdateResponse(BaseModel):
     user: dict
+
+
+class AdminPasswordUpdateRequest(BaseModel):
+    new_password: str
 
 
 class PasswordResetIssueResponse(BaseModel):
@@ -449,12 +452,10 @@ async def create_user(
     if payload.organization is not None and payload.organization not in ("AICL", "GSDS"):
         raise HTTPException(status_code=422, detail="organization must be 'AICL', 'GSDS', or null")
 
-    # Random initial password -- NOT a predictable pattern. token_urlsafe
-    # produces a high-entropy string comfortably clearing the 12-char
-    # policy floor; still run it through validate_password_policy so the
-    # generation scheme and the policy can never silently drift apart.
-    initial_password = secrets.token_urlsafe(18)
-    validate_password_policy(initial_password)
+    try:
+        validate_password_policy(payload.password)
+    except PasswordPolicyError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     pool = get_pool()
     async with pool.acquire() as conn:
@@ -465,11 +466,11 @@ async def create_user(
         user = await users_repo.create_user(
             conn,
             email=payload.email,
-            password=initial_password,
+            password=payload.password,
             role=payload.role,
             display_name=payload.display_name,
             organization=payload.organization,
-            must_change_password=True,
+            must_change_password=False,
         )
 
         actor_user_id, actor_email = _actor_from_request(request)
@@ -483,10 +484,7 @@ async def create_user(
             detail={"email": user["email"], "role": user["role"]},
         )
 
-    return UserCreateResponse(
-        user=users_repo.to_public_dict(user),
-        initial_password=initial_password,
-    )
+    return UserCreateResponse(user=users_repo.to_public_dict(user))
 
 
 @router.patch("/users/{user_id}", response_model=UserUpdateResponse)
@@ -550,6 +548,60 @@ async def update_user(
                     target_user_id=user_id,
                     detail={"old_is_active": existing["is_active"], "new_is_active": True},
                 )
+
+    return UserUpdateResponse(user=users_repo.to_public_dict(updated))
+
+
+@router.patch("/users/{user_id}/password", response_model=UserUpdateResponse)
+async def update_user_password(
+    user_id: int,
+    payload: AdminPasswordUpdateRequest,
+    request: Request,
+    _role: str = Depends(require_admin),
+) -> UserUpdateResponse:
+    """Sets a user password directly from the admin console.
+
+    The plaintext password is policy-validated and hashed in-process, never
+    returned or written to logs. All existing sessions for the target user
+    are revoked before the database update so a revocation failure cannot
+    leave the new credential active alongside stale sessions.
+    """
+    try:
+        validate_password_policy(payload.new_password)
+    except PasswordPolicyError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    pool = get_pool()
+    async with pool.acquire() as conn:
+        existing = await users_repo.get_user_by_id(conn, user_id)
+        if existing is None:
+            raise HTTPException(status_code=404, detail=f"user id={user_id} not found")
+
+        new_hash = hash_password(payload.new_password)
+
+        # Revocation must succeed before the credential changes. If Redis is
+        # unavailable, leave the old password in place instead of returning
+        # an error after partially applying a security-sensitive operation.
+        await destroy_all_for_user(user_id)
+
+        actor_user_id, actor_email = _actor_from_request(request)
+        async with conn.transaction():
+            updated = await users_repo.set_password(
+                conn, user_id, new_hash, must_change_password=False
+            )
+            if updated is None:
+                raise HTTPException(status_code=404, detail=f"user id={user_id} not found")
+
+            # Keep the password write and its audit event in one database
+            # transaction so they cannot report contradictory outcomes.
+            await auth_audit.record_event(
+                conn,
+                event_type=auth_audit.PASSWORD_ADMIN_SET,
+                outcome=auth_audit.OUTCOME_SUCCESS,
+                actor_user_id=actor_user_id,
+                actor_email=actor_email,
+                target_user_id=user_id,
+            )
 
     return UserUpdateResponse(user=users_repo.to_public_dict(updated))
 
