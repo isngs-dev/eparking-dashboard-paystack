@@ -50,12 +50,12 @@ export async function CardSalesSection({ filters }: { filters: ResolvedFilters }
     <SectionCard
       span={3}
       title="Card Sales"
-      subtitle={`Annual vs Monthly, by ${grainLabel(span)}`}
+      subtitle={`Annual (Shop Owners) vs Monthly (Green Cabs), by ${grainLabel(span)}`}
       headerRight={
         <LegendChips
           items={[
-            { colorVar: "--s1", label: "Annual ₦10,500" },
-            { colorVar: "--s3", label: "Monthly ₦2,000" },
+            { colorVar: "--s1", label: "Annual (Shop Owners) ₦10,500" },
+            { colorVar: "--s3", label: "Monthly (Green Cabs) ₦2,000" },
           ]}
         />
       }
@@ -67,14 +67,14 @@ export async function CardSalesSection({ filters }: { filters: ResolvedFilters }
           annual: {
             title: p.label,
             rows: [
-              { label: "Annual amount", value: formatNaira(p.annual_amount) },
+              { label: "Annual (Shop Owners) amount", value: formatNaira(p.annual_amount) },
               { label: "Cards sold", value: formatInt(p.annual_count) },
             ],
           },
           monthly: {
             title: p.label,
             rows: [
-              { label: "Monthly amount", value: formatNaira(p.monthly_amount) },
+              { label: "Monthly (Green Cabs) amount", value: formatNaira(p.monthly_amount) },
               { label: "Cards sold", value: formatInt(p.monthly_count) },
             ],
           },

@@ -6,6 +6,7 @@ export function SectionCard({
   title,
   subtitle,
   span,
+  rowSpan,
   infoTitle,
   headerRight,
   children,
@@ -13,12 +14,13 @@ export function SectionCard({
   title: string;
   subtitle?: string;
   span: number;
+  rowSpan?: number;
   infoTitle?: string;
   headerRight?: ReactNode;
   children: ReactNode;
 }) {
   return (
-    <Card span={span} className={styles.section}>
+    <Card span={span} rowSpan={rowSpan} className={styles.section}>
       <div className={styles.headerRow}>
         <div className={styles.titleGroup}>
           <h2 className={styles.title}>{title}</h2>

@@ -15,7 +15,6 @@ export interface PeakBandRect {
   /** 0..1 fraction of chart width for start/end. Can be two rects if wrapping. */
   x0: number;
   x1: number;
-  label?: string;
 }
 
 export interface SmoothAreaChartProps {
@@ -85,19 +84,6 @@ export function SmoothAreaChart({
             />
           ))}
         </svg>
-        {peakBands?.map((band, i) =>
-          band.label ? (
-            <span
-              key={i}
-              className={styles.peakBandLabel}
-              style={{
-                left: `${((band.x0 + band.x1) / 2) * 100}%`,
-              }}
-            >
-              {band.label}
-            </span>
-          ) : null,
-        )}
         <div className={styles.xAxis}>
           {xLabels.map((label, i) =>
             labelIdx.has(i) ? (

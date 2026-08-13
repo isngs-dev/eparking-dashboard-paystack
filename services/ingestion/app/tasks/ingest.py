@@ -58,10 +58,23 @@ async def _run_api_ingest(
         client = PaystackClient()
         try:
             batch = []
+            # Only 'success' is fetched -- failed/abandoned attempts are
+            # never queried by any dashboard view (see occupancy.py /
+            # revenue.py, which both hardcode status='success') or used for
+            # reconciliation, so pulling them just inflates raw_transactions'
+            # JSONB storage for no downstream benefit.
             async for tx in client.iter_all_transactions(
-                window_from=window_from, window_to=window_to
+                window_from=window_from, window_to=window_to, status="success"
             ):
                 rows_fetched += 1
+                # Defensive: Paystack's `status` list-filter is NOT reliable
+                # for very recent transactions -- observed firsthand: a
+                # sync_recent run querying status=success still returned
+                # transactions individually confirmed (by-ID lookup) to be
+                # 'failed'/'abandoned', for windows within the last ~48h.
+                # Never trust the upstream filter alone; always re-check here.
+                if tx.get("status") != "success":
+                    continue
                 # Defensive: window is off created_at, but the API is also
                 # queried with from/to on created_at, so this is a sanity
                 # re-check rather than the primary filter.

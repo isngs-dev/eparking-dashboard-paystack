@@ -15,16 +15,31 @@ export interface ResolvedFilters {
 
 export type SearchParams = Record<string, string | string[] | undefined>;
 
+export const FILTER_PARAM_NAMES = ["from", "to", "vehicle_types", "days"] as const;
+
+/** Carries only global filter state when navigating between dashboard pages. */
+export function dashboardHref(
+  pathname: string,
+  searchParams: Pick<URLSearchParams, "get">,
+): string {
+  const filters = new URLSearchParams();
+  for (const name of FILTER_PARAM_NAMES) {
+    const value = searchParams.get(name);
+    if (value) filters.set(name, value);
+  }
+  const query = filters.toString();
+  return query ? `${pathname}?${query}` : pathname;
+}
+
 function firstValue(v: string | string[] | undefined): string | undefined {
   if (Array.isArray(v)) return v[0];
   return v;
 }
 
-/** Business-timezone "today" minus 29 days through today -- matches the API's own default window. */
+/** First day of the current calendar month through today. */
 export function defaultDateRange(today: Date = new Date()): { from: string; to: string } {
   const to = toIsoDate(today);
-  const fromDate = new Date(today);
-  fromDate.setDate(fromDate.getDate() - 29);
+  const fromDate = new Date(today.getFullYear(), today.getMonth(), 1);
   const from = toIsoDate(fromDate);
   return { from, to };
 }

@@ -150,6 +150,7 @@ class PaystackClient:
         window_to: datetime,
         page: int = 1,
         per_page: int = _DEFAULT_PER_PAGE,
+        status: str | None = None,
     ) -> PaystackPage:
         """Fetch one page of `GET /transaction`, windowed off `created_at`.
 
@@ -164,6 +165,8 @@ class PaystackClient:
             "from": window_from.isoformat(),
             "to": window_to.isoformat(),
         }
+        if status is not None:
+            params["status"] = status
         payload = await self._request_with_retry(params)
 
         if not payload.get("status", False):
@@ -186,6 +189,7 @@ class PaystackClient:
         window_from: datetime,
         window_to: datetime,
         per_page: int = _DEFAULT_PER_PAGE,
+        status: str | None = None,
     ):
         """Async generator yielding every transaction dict in the window.
 
@@ -200,6 +204,7 @@ class PaystackClient:
                 window_to=window_to,
                 page=page,
                 per_page=per_page,
+                status=status,
             )
             for row in result.data:
                 yield row

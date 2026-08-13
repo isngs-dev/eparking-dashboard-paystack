@@ -10,6 +10,7 @@ from fastapi import APIRouter, Depends, Query, Response
 
 from app.core.auth import require_viewer_or_admin
 from app.core.cache import cache_key, get_swr
+from app.core.date_windows import revenue_kpi_windows
 from app.core.db import get_pool
 from app.core.filters import CommonFilters, parse_common_filters
 from app.core.settings_repo import get_today
@@ -37,24 +38,19 @@ async def overview_summary(
     range so the frontend can never present them ambiguously (fixes the old
     dashboard's Daily > Monthly bug -- see api-layer skill).
 
-    Each window is the trailing N days ending on the latest complete day
-    (today, business-timezone) -- Daily = today only, Weekly = trailing 7
-    days, Monthly = trailing 30 days. Not affected by from/to filters: this
-    is a fixed-definition KPI card, per the skill's guidance to define each
-    window unambiguously rather than let a global filter silently reshape it.
+    Each window ends today in the business timezone. Daily is today only,
+    Weekly is Monday-to-today, and Monthly is the first of the month through
+    today. They are not affected by from/to filters: each KPI has a fixed,
+    explicit calendar-to-date definition.
     """
     pool = get_pool()
-    key = cache_key("overview_summary", {})
+    async with pool.acquire() as conn:
+        today = await get_today(conn)
+    key = cache_key("overview_summary", {"today": today.isoformat()})
 
     async def loader() -> dict:
         async with pool.acquire() as conn:
-            today = await get_today(conn)
-
-            windows = {
-                "daily": (today, today, "Today"),
-                "weekly": (today - timedelta(days=6), today, "Trailing 7 days"),
-                "monthly": (today - timedelta(days=29), today, "Trailing 30 days"),
-            }
+            windows = revenue_kpi_windows(today)
             out = {}
             for key_name, (date_from, date_to, label) in windows.items():
                 totals = await revenue_repo.sum_window(

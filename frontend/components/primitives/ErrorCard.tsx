@@ -10,13 +10,15 @@ export function ErrorCard({
   title,
   message,
   span = 1,
+  rowSpan = 1,
 }: {
   title: string;
   message: string;
   span?: number;
+  rowSpan?: number;
 }) {
   return (
-    <Card span={span} className={styles.errorCard}>
+    <Card span={span} rowSpan={rowSpan} className={styles.errorCard}>
       <div className={styles.title}>{title}</div>
       <p className={styles.message}>{message}</p>
     </Card>

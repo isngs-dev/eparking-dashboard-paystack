@@ -23,7 +23,7 @@ export async function OccupancyKpiCards({ filters }: { filters: ResolvedFilters 
     const message =
       entryRes.errorMessage ?? todayRes.errorMessage ?? peakRes.errorMessage ?? "Failed to load.";
     return (
-      <ErrorCard title="Entry Count / Total Vehicles / Peak Hours" message={message} span={3} />
+      <ErrorCard title="Total Count / Total Vehicles / Peak Hours" message={message} span={3} />
     );
   }
 
@@ -40,20 +40,6 @@ export async function OccupancyKpiCards({ filters }: { filters: ResolvedFilters 
   return (
     <>
       <KpiCard
-        label="Entry Count"
-        value={formatInt(entry.entry_count)}
-        sublabel="Ticket transactions in range"
-        infoTitle={basisText(entry.entry_count_basis)}
-        footnote={ignoredFiltersFootnote("occupancy_entry_count", active)}
-        tooltip={{
-          title: "Entry Count",
-          rows: [
-            { label: "Count", value: formatInt(entry.entry_count) },
-            { label: "Basis", value: entry.entry_count_basis },
-          ],
-        }}
-      />
-      <KpiCard
         label="Total Vehicles Today"
         value={formatInt(today.vehicle_count)}
         sublabel="Today only — not affected by filters"
@@ -64,6 +50,20 @@ export async function OccupancyKpiCards({ filters }: { filters: ResolvedFilters 
             { label: "Date", value: today.date },
             { label: "Count", value: formatInt(today.vehicle_count) },
             { label: "Basis", value: today.entry_count_basis },
+          ],
+        }}
+      />
+      <KpiCard
+        label="Total Count"
+        value={formatInt(entry.entry_count)}
+        sublabel="Total Entries in range"
+        infoTitle={basisText(entry.entry_count_basis)}
+        footnote={ignoredFiltersFootnote("occupancy_entry_count", active)}
+        tooltip={{
+          title: "Total Count",
+          rows: [
+            { label: "Count", value: formatInt(entry.entry_count) },
+            { label: "Basis", value: entry.entry_count_basis },
           ],
         }}
       />

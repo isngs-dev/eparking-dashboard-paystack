@@ -21,18 +21,18 @@ export async function TotalCardSaleCard({ filters }: { filters: ResolvedFilters 
       <div className={styles.breakdown}>
         <div className={styles.row}>
           <span className={styles.swatch} style={{ background: "var(--s1)" }} />
-          <span className={styles.rowLabel}>Annual</span>
+          <span className={styles.rowLabel}>Annual (Shop Owners)</span>
           <span className={styles.rowValue}>{formatNaira(total.annual_amount)}</span>
         </div>
         <div className={styles.row}>
           <span className={styles.swatch} style={{ background: "var(--s3)" }} />
-          <span className={styles.rowLabel}>Monthly</span>
+          <span className={styles.rowLabel}>Monthly (Green Cabs)</span>
           <span className={styles.rowValue}>{formatNaira(total.monthly_amount)}</span>
         </div>
       </div>
       <p className={styles.detail}>
-        {formatInt(total.annual_count)} annual · {formatInt(total.monthly_count)} monthly cards.
-        ₦12,500 bundles split across both sub-types.
+        {formatInt(total.annual_count)} Annual (Shop Owners) · {formatInt(total.monthly_count)} Monthly
+        (Green Cabs) cards. ₦12,500 bundles split across both sub-types.
       </p>
       {footnote ? <p className={styles.footnote}>{footnote}</p> : null}
     </Card>

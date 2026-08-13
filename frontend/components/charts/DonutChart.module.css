@@ -12,6 +12,10 @@
   height: auto;
 }
 
+.large {
+  max-width: 280px;
+}
+
 .arc {
   cursor: pointer;
   transition: opacity 0.15s ease;

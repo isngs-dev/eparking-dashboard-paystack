@@ -12,18 +12,28 @@ export interface DonutChartProps {
   segments: DonutSegment[];
   centerValue: string;
   centerLabel: string;
+  large?: boolean;
   /** Pre-computed tooltip content keyed by segment key -- see SmoothAreaChart for why this isn't a callback. */
   tooltips: Record<string, TooltipContent>;
 }
 
-export function DonutChart({ segments, centerValue, centerLabel, tooltips }: DonutChartProps) {
+export function DonutChart({
+  segments,
+  centerValue,
+  centerLabel,
+  large = false,
+  tooltips,
+}: DonutChartProps) {
   const { bind } = useTooltip();
   const arcs = donutArcs(segments, R);
   const circumference = 2 * Math.PI * R;
 
   return (
     <div className={styles.wrap}>
-      <svg viewBox="0 0 120 120" className={styles.svg}>
+      <svg
+        viewBox="0 0 120 120"
+        className={[styles.svg, large && styles.large].filter(Boolean).join(" ")}
+      >
         <circle cx={CX} cy={CY} r={R} fill="none" stroke="var(--grid)" strokeWidth={20} />
         <g transform={`rotate(-90 ${CX} ${CY})`}>
           {arcs.map((arc) =>

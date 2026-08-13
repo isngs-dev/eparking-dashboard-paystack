@@ -30,7 +30,7 @@ export type EndpointKey =
   | "traffic_today";
 
 export const ENDPOINT_FILTERS: Record<EndpointKey, FilterKind[]> = {
-  // Fixed trailing windows (Today/7d/30d) -- ignores from/to/vehicle_types/days entirely.
+  // Fixed calendar-to-date windows (Today/WTD/MTD) -- ignores all global filters.
   overview_summary: [],
   // Day-grain rollup has no per-vehicle/day-of-week dimension; honors from/to only.
   revenue_trend: ["date"],

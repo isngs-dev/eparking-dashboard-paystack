@@ -76,26 +76,3 @@
    */
   z-index: -1;
 }
-
-.peakBandLabel {
-  /*
-   * A sibling of .peakBand and .svg (not a descendant of .peakBand) so it
-   * paints in its own right: DOM order places it after .svg, and as a
-   * positioned element with the default z-index:auto it paints above the
-   * preceding static .svg and above .peakBand's z-index:-1 stacking
-   * context, without needing an explicit z-index of its own. Positioned
-   * here (top:4px, containing block is .chartArea) so it reads as sitting
-   * just inside the top of the highlighted band rather than floating
-   * above the chart entirely.
-   */
-  position: absolute;
-  top: 4px;
-  transform: translateX(-50%);
-  font-family: var(--font-inter), Inter, sans-serif;
-  font-weight: 600;
-  font-size: 8.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--mu);
-  white-space: nowrap;
-}

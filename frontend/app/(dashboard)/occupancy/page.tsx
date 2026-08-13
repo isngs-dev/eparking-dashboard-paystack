@@ -6,7 +6,6 @@ import { VisualErrorBoundary } from "@/components/primitives/VisualErrorBoundary
 import { SkeletonCard } from "@/components/primitives/Skeleton";
 import { resolveFilters, type SearchParams } from "@/lib/filters";
 import { OccupancyKpiCards } from "@/components/occupancy/OccupancyKpiCards";
-import { InfoCalloutSection } from "@/components/occupancy/InfoCalloutSection";
 import { OccupancyByHourSection } from "@/components/occupancy/OccupancyByHourSection";
 import { PeakVsOffPeakSection } from "@/components/occupancy/PeakVsOffPeakSection";
 import { VehicleTypeDistributionSection } from "@/components/occupancy/VehicleTypeDistributionSection";
@@ -22,10 +21,10 @@ export default async function OccupancyPage({
 
   return (
     <>
-      <PageHeader title="Occupancy & Traffic" tag="Usage & volume" />
+      <PageHeader title="Occupancy & Traffic" />
       <FilterBarServer />
       <BodyGrid>
-        <VisualErrorBoundary title="Entry Count / Total Vehicles / Peak Hours" span={3}>
+        <VisualErrorBoundary title="Total Count / Total Vehicles / Peak Hours" span={3}>
           <Suspense
             fallback={
               <>
@@ -39,9 +38,9 @@ export default async function OccupancyPage({
           </Suspense>
         </VisualErrorBoundary>
 
-        <VisualErrorBoundary title="Derived from ticket payments" span={1}>
-          <Suspense fallback={<SkeletonCard span={1} height={60} />}>
-            <InfoCalloutSection filters={filters} />
+        <VisualErrorBoundary title="Vehicle Type Distribution" span={1} rowSpan={2}>
+          <Suspense fallback={<SkeletonCard span={1} rowSpan={2} height={300} />}>
+            <VehicleTypeDistributionSection filters={filters} />
           </Suspense>
         </VisualErrorBoundary>
 
@@ -54,12 +53,6 @@ export default async function OccupancyPage({
         <VisualErrorBoundary title="Peak vs Off-Peak" span={1}>
           <Suspense fallback={<SkeletonCard span={1} height={200} />}>
             <PeakVsOffPeakSection filters={filters} />
-          </Suspense>
-        </VisualErrorBoundary>
-
-        <VisualErrorBoundary title="Vehicle Type Distribution" span={1}>
-          <Suspense fallback={<SkeletonCard span={1} height={200} />}>
-            <VehicleTypeDistributionSection filters={filters} />
           </Suspense>
         </VisualErrorBoundary>
 

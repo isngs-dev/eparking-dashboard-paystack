@@ -6,7 +6,6 @@ import { SectionCard } from "@/components/primitives/SectionCard";
 import { LegendChips } from "@/components/primitives/LegendChips";
 import { SmoothAreaChart } from "@/components/charts/SmoothAreaChart";
 import { FilterFootnote } from "@/components/primitives/FilterFootnote";
-import { ExportButton } from "@/components/primitives/ExportButton";
 import { ErrorCard } from "@/components/primitives/ErrorCard";
 
 function niceYLabels(maxValue: number): string[] {
@@ -31,26 +30,12 @@ export async function RevenueTrendSection({ filters }: { filters: ResolvedFilter
       span={3}
       title="Revenue Trend"
       subtitle={`Total collection per day · ${trend.date_range.date_from} to ${trend.date_range.date_to}`}
-      headerRight={
-        <>
-          <LegendChips items={[{ colorVar: "--s1", label: "Total collection" }]} />
-          <ExportButton
-            eventName="eparking:export-primary"
-            filename="revenue-trend.csv"
-            rows={trend.points.map((p) => ({
-              date: p.date,
-              total_collection: p.total_collection,
-              ticket_amount: p.ticket_amount,
-              card_total_amount: p.card_total_amount,
-              transaction_count_total: p.transaction_count_total,
-            }))}
-          />
-        </>
-      }
+      headerRight={<LegendChips items={[{ colorVar: "--s1", label: "Total collection" }]} />}
     >
       <SmoothAreaChart
         values={values}
         xLabels={trend.points.map((p) => formatShortDate(p.date))}
+        xLabelCount={14}
         yLabels={niceYLabels(maxValue)}
         tooltips={trend.points.map((p) => ({
           title: formatFullDate(p.date),

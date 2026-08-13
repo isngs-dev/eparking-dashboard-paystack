@@ -14,6 +14,7 @@ import type { LoginFormState } from "./types";
 export async function loginAction(_prevState: LoginFormState, formData: FormData): Promise<LoginFormState> {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
+  const nextPath = sanitizeNextPath(String(formData.get("next") ?? "/"));
 
   if (!email || !password) {
     return { error: "Email and password are required." };
@@ -44,5 +45,15 @@ export async function loginAction(_prevState: LoginFormState, formData: FormData
     }
   }
 
-  redirect("/");
+  redirect(nextPath);
+}
+
+function sanitizeNextPath(path: string): string {
+  if (!path || !path.startsWith("/") || path.startsWith("//")) {
+    return "/";
+  }
+  if (path === "/login" || path.startsWith("/login?")) {
+    return "/";
+  }
+  return path;
 }

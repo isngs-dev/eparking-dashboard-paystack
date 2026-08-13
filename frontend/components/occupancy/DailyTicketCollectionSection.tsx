@@ -3,7 +3,11 @@ import { tryFetch } from "@/lib/tryFetch";
 import { activeFilterKinds, type ResolvedFilters } from "@/lib/filters";
 import { pivotTicketsByTier } from "@/lib/ticketPivot";
 import { formatCompactNaira, formatFullDate, formatInt, formatNaira, formatShortDate } from "@/lib/format";
-import { vehicleTypeColorVar, VEHICLE_TYPE_PRICE } from "@/lib/seriesColors";
+import {
+  vehicleTypeColorVar,
+  vehicleTypeLabel,
+  VEHICLE_TYPE_PRICE,
+} from "@/lib/seriesColors";
 import { SectionCard } from "@/components/primitives/SectionCard";
 import { LegendChips } from "@/components/primitives/LegendChips";
 import { StackedBarChart } from "@/components/charts/StackedBarChart";
@@ -50,7 +54,9 @@ export async function DailyTicketCollectionSection({ filters }: { filters: Resol
         <LegendChips
           items={tiersPresent.map((tier) => ({
             colorVar: vehicleTypeColorVar(tier),
-            label: `${tier} ₦${(VEHICLE_TYPE_PRICE[tier] ?? 0).toLocaleString("en-NG")}`,
+            label: `${vehicleTypeLabel(tier)} ₦${(
+              VEHICLE_TYPE_PRICE[tier] ?? 0
+            ).toLocaleString("en-NG")}`,
           }))}
         />
       }
@@ -72,7 +78,7 @@ export async function DailyTicketCollectionSection({ filters }: { filters: Resol
               acc[tier] = {
                 title: formatFullDate(d.date),
                 rows: [
-                  { label: tier, value: formatNaira(seg.ticket_amount) },
+                  { label: vehicleTypeLabel(tier), value: formatNaira(seg.ticket_amount) },
                   { label: "Tickets", value: formatInt(seg.ticket_count) },
                   { label: "Day total", value: formatNaira(d.dayTotalAmount) },
                 ],

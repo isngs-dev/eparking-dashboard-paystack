@@ -24,6 +24,16 @@ export const VEHICLE_TYPE_PRICE: Record<string, number> = {
   Trailer: 3000,
 };
 
+const VEHICLE_TYPE_LABEL: Record<string, string> = {
+  "Dyna/Canter": "Dyna/ Center",
+  "Dyna Canter": "Dyna/ Center",
+};
+
+/** User-facing label for a backend vehicle-type value. */
+export function vehicleTypeLabel(vehicleType: string): string {
+  return VEHICLE_TYPE_LABEL[vehicleType] ?? vehicleType;
+}
+
 /** Fallback color var for a vehicle type not in the known map (defensive, shouldn't happen). */
 export function vehicleTypeColorVar(vehicleType: string): string {
   return VEHICLE_TYPE_COLOR_VAR[vehicleType] ?? "--mu";

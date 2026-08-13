@@ -15,12 +15,13 @@ function SubmitButton() {
   );
 }
 
-export function LoginForm() {
+export function LoginForm({ next = "/" }: { next?: string }) {
   const [state, formAction] = useFormState(loginAction, initialLoginState);
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <form action={formAction} noValidate>
+      <input type="hidden" name="next" value={next} />
       {state.error ? (
         <div className={styles.errorBanner} role="alert">
           {state.error}

@@ -2,7 +2,11 @@ import { getVehicleTypeDistribution } from "@/lib/api/client";
 import { tryFetch } from "@/lib/tryFetch";
 import type { ResolvedFilters } from "@/lib/filters";
 import { formatInt, formatNaira, formatPct } from "@/lib/format";
-import { vehicleTypeColorVar, VEHICLE_TYPE_PRICE } from "@/lib/seriesColors";
+import {
+  vehicleTypeColorVar,
+  vehicleTypeLabel,
+  VEHICLE_TYPE_PRICE,
+} from "@/lib/seriesColors";
 import { SectionCard } from "@/components/primitives/SectionCard";
 import { DonutChart } from "@/components/charts/DonutChart";
 import { ErrorCard } from "@/components/primitives/ErrorCard";
@@ -13,7 +17,14 @@ export async function VehicleTypeDistributionSection({ filters }: { filters: Res
     getVehicleTypeDistribution(filters, "range"),
   );
   if (!dist) {
-    return <ErrorCard title="Vehicle Type Distribution" message={errorMessage!} span={1} />;
+    return (
+      <ErrorCard
+        title="Vehicle Type Distribution"
+        message={errorMessage!}
+        span={1}
+        rowSpan={2}
+      />
+    );
   }
   const totalCount = dist.items.reduce((s, i) => s + i.txn_count, 0);
 
@@ -26,6 +37,7 @@ export async function VehicleTypeDistributionSection({ filters }: { filters: Res
   return (
     <SectionCard
       span={1}
+      rowSpan={2}
       title="Vehicle Type Distribution"
       infoTitle="Vehicle type is inferred from the ticket fee tier paid, not from a camera. Hover a segment for detail."
     >
@@ -33,10 +45,11 @@ export async function VehicleTypeDistributionSection({ filters }: { filters: Res
         segments={segments}
         centerValue={formatInt(totalCount)}
         centerLabel="TICKETS"
+        large
         tooltips={dist.items.reduce<Record<string, TooltipContent>>((acc, item) => {
           const share = totalCount > 0 ? (item.txn_count / totalCount) * 100 : 0;
           acc[item.vehicle_type] = {
-            title: item.vehicle_type,
+            title: vehicleTypeLabel(item.vehicle_type),
             rows: [
               { label: "Tickets", value: formatInt(item.txn_count) },
               { label: "Share", value: formatPct(share) },

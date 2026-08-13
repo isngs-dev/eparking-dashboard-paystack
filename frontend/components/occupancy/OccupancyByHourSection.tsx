@@ -1,7 +1,7 @@
 import { getOccupancyByHour, getPeakHours } from "@/lib/api/client";
 import { tryFetch } from "@/lib/tryFetch";
 import { activeFilterKinds, type ResolvedFilters } from "@/lib/filters";
-import { formatHour, formatHourBand, formatInt, formatPct } from "@/lib/format";
+import { formatHour, formatInt, formatPct } from "@/lib/format";
 import { SectionCard } from "@/components/primitives/SectionCard";
 import { SmoothAreaChart, type PeakBandRect } from "@/components/charts/SmoothAreaChart";
 import { FilterFootnote } from "@/components/primitives/FilterFootnote";
@@ -19,13 +19,12 @@ function niceIntYLabels(maxValue: number): string[] {
 /** Handles a band that wraps past midnight -- renders as two rects, not one with negative width. */
 function peakBandRects(start: number | null, end: number | null): PeakBandRect[] {
   if (start === null || end === null) return [];
-  const bandLabel = `PEAK BAND · ${formatHourBand(start, end)}`;
   if (end >= start) {
-    return [{ x0: start / 24, x1: (end + 1) / 24, label: bandLabel }];
+    return [{ x0: start / 24, x1: (end + 1) / 24 }];
   }
   // wraps past midnight: [start, 23] and [0, end]
   return [
-    { x0: start / 24, x1: 1, label: bandLabel },
+    { x0: start / 24, x1: 1 },
     { x0: 0, x1: (end + 1) / 24 },
   ];
 }

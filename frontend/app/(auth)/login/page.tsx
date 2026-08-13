@@ -9,7 +9,12 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function LoginPage() {
+export default function LoginPage({
+  searchParams,
+}: {
+  searchParams?: { next?: string };
+}) {
+  const next = sanitizeNextPath(searchParams?.next ?? "/");
   return (
     <div className={styles.page}>
       <div className={styles.formPanel}>
@@ -28,7 +33,7 @@ export default function LoginPage() {
           <h1 className={styles.heading}>Welcome Back</h1>
           <p className={styles.subtext}>Please sign in to your account</p>
 
-          <LoginForm />
+          <LoginForm next={next} />
         </div>
       </div>
 
@@ -52,4 +57,15 @@ export default function LoginPage() {
       </div>
     </div>
   );
+}
+
+
+function sanitizeNextPath(path: string): string {
+  if (!path || !path.startsWith("/") || path.startsWith("//")) {
+    return "/";
+  }
+  if (path === "/login" || path.startsWith("/login?")) {
+    return "/";
+  }
+  return path;
 }

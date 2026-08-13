@@ -14,6 +14,7 @@ import { ErrorCard } from "./ErrorCard";
 interface Props {
   title: string;
   span?: number;
+  rowSpan?: number;
   children: ReactNode;
 }
 
@@ -32,7 +33,14 @@ export class VisualErrorBoundary extends Component<Props, State> {
     if (this.state.error) {
       const message =
         (this.state.error as any)?.detail ?? this.state.error.message ?? "Something went wrong.";
-      return <ErrorCard title={this.props.title} message={message} span={this.props.span} />;
+      return (
+        <ErrorCard
+          title={this.props.title}
+          message={message}
+          span={this.props.span}
+          rowSpan={this.props.rowSpan}
+        />
+      );
     }
     return this.props.children;
   }

@@ -10,7 +10,7 @@
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useTransition } from "react";
 import { DAY_OPTIONS, defaultDateRange } from "@/lib/filters";
-import { daySpan } from "@/lib/format";
+import { vehicleTypeLabel } from "@/lib/seriesColors";
 import { DateRangePicker } from "@/components/filter/DateRangePicker";
 import styles from "./FilterBar.module.css";
 
@@ -46,16 +46,6 @@ export function FilterBar({ vehicleTypes }: { vehicleTypes: string[] }) {
     });
   }
 
-  function handleExport() {
-    // Delegates to the currently-focused/last-rendered visual's own export
-    // button when present; the global Export button exports the primary
-    // trend/collection visual for the page as a reasonable default.
-    const event = new CustomEvent("eparking:export-primary");
-    window.dispatchEvent(event);
-  }
-
-  const rangeDays = daySpan(from, to);
-
   return (
     <div className={styles.bar}>
       <span className={styles.label}>Global filters</span>
@@ -69,9 +59,9 @@ export function FilterBar({ vehicleTypes }: { vehicleTypes: string[] }) {
           onChange={(e) => pushParams({ vehicle_types: e.target.value || undefined })}
         >
           <option value="">All types</option>
-          {vehicleTypes.map((vt) => (
+          {vehicleTypes.filter((vt) => vt !== "Porter").map((vt) => (
             <option key={vt} value={vt}>
-              {vt}
+              {vehicleTypeLabel(vt)}
             </option>
           ))}
         </select>
@@ -92,13 +82,8 @@ export function FilterBar({ vehicleTypes }: { vehicleTypes: string[] }) {
         </select>
       </div>
 
-      <span className={styles.rangeLabel}>{rangeDays} days · applies to both pages</span>
-
       <div className={styles.spacer} />
 
-      <button type="button" className={styles.exportBtn} onClick={handleExport}>
-        Export
-      </button>
       <button type="button" className={styles.clearBtn} onClick={handleClearAll}>
         Clear all filters
       </button>

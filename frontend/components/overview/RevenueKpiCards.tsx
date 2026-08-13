@@ -3,7 +3,7 @@ import { BackendFetchError } from "@/lib/api/backendFetch";
 import { activeFilterKinds, type ResolvedFilters } from "@/lib/filters";
 import type { EndpointKey, FilterKind } from "@/lib/api/endpointFilters";
 import { ignoredFiltersFootnote } from "@/lib/api/endpointFilters";
-import { formatNaira, formatInt } from "@/lib/format";
+import { formatNaira, formatInt, formatShortDate } from "@/lib/format";
 import { KpiCard } from "@/components/kpi/KpiCard";
 import { ErrorCard } from "@/components/primitives/ErrorCard";
 import type { KPIWindow, TotalCollectionResponse } from "@/lib/api/types";
@@ -20,6 +20,10 @@ function windowCard(label: string, w: KPIWindow, endpointKey: EndpointKey, activ
       tooltip={{
         title: label,
         rows: [
+          {
+            label: "Date range",
+            value: `${formatShortDate(w.date_range.date_from)} – ${formatShortDate(w.date_range.date_to)}`,
+          },
           { label: "Ticket amount", value: formatNaira(w.ticket_amount) },
           { label: "Card total", value: formatNaira(w.card_total_amount) },
           { label: "Transactions", value: formatInt(w.transaction_count_total) },
@@ -42,7 +46,7 @@ export async function RevenueKpiCards({ filters }: { filters: ResolvedFilters })
 
   return (
     <>
-      {windowCard("Daily Revenue", summary.daily, "overview_summary", active)}
+      {windowCard("Today's Revenue", summary.daily, "overview_summary", active)}
       {windowCard("Weekly Revenue", summary.weekly, "overview_summary", active)}
       {windowCard("Monthly Revenue", summary.monthly, "overview_summary", active)}
       <TotalCollectionCard total={total} active={active} />

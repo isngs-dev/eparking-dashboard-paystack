@@ -46,27 +46,8 @@
   color: var(--tx);
 }
 
-.rangeLabel {
-  font-family: var(--font-inter), Inter, sans-serif;
-  font-size: 10.5px;
-  color: var(--mu);
-  white-space: nowrap;
-}
-
 .spacer {
   margin-left: auto;
-}
-
-.exportBtn {
-  border: 1px solid var(--bd);
-  background: transparent;
-  color: var(--tx);
-  border-radius: 8px;
-  padding: 7px 14px;
-  font-family: var(--font-inter), Inter, sans-serif;
-  font-size: 11.5px;
-  font-weight: 500;
-  cursor: pointer;
 }
 
 .clearBtn {

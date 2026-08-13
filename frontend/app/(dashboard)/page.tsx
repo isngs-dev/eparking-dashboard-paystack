@@ -20,7 +20,7 @@ export default async function OverviewPage({
 
   return (
     <>
-      <PageHeader title="Overview · Revenue" tag="Money" />
+      <PageHeader title="Overview · Revenue" />
       <FilterBarServer />
       <BodyGrid>
         <VisualErrorBoundary title="Daily/Weekly/Monthly/Total Collection" span={4}>
