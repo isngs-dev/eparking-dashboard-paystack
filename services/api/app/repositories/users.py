@@ -100,6 +100,24 @@ async def list_users(conn: asyncpg.Connection) -> list[dict]:
     return [dict(r) for r in rows]
 
 
+async def update_display_name(
+    conn: asyncpg.Connection, user_id: int, display_name: str
+) -> dict | None:
+    """Updates an active user's self-service profile field atomically."""
+    row = await conn.fetchrow(
+        f"""
+        UPDATE eparking.users SET
+            display_name = $2,
+            updated_at = now()
+        WHERE id = $1 AND is_active = TRUE
+        RETURNING {_USER_COLUMNS}
+        """,
+        user_id,
+        display_name,
+    )
+    return dict(row) if row else None
+
+
 async def update_user(conn: asyncpg.Connection, user_id: int, patch: dict) -> dict | None:
     """Partial update of role/display_name/organization/is_active/
     must_change_password. `patch` should already be the caller's

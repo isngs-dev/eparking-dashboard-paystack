@@ -2,16 +2,16 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { ThemeToggle } from "./ThemeToggle";
 import { logoutAction } from "@/lib/auth/logout";
 import type { PublicUser } from "@/lib/auth/login";
-import { dashboardHref } from "@/lib/filters";
 import styles from "./Navbar.module.css";
 
 const NAV_ITEMS = [
   { href: "/", label: "Overview · Revenue" },
   { href: "/occupancy", label: "Occupancy & Traffic" },
+  { href: "/settings", label: "Settings" },
 ];
 
 function initials(displayName: string): string {
@@ -23,7 +23,6 @@ function initials(displayName: string): string {
 
 export function Navbar({ user }: { user: PublicUser }) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   return (
     <nav className={styles.navbar}>
@@ -47,7 +46,7 @@ export function Navbar({ user }: { user: PublicUser }) {
           return (
             <Link
               key={item.href}
-              href={dashboardHref(item.href, searchParams)}
+              href={item.href}
               className={[styles.pill, active ? styles.pillActive : ""].join(" ")}
             >
               {item.label}

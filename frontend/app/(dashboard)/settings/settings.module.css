@@ -1,0 +1,147 @@
+.stage {
+  width: min(980px, calc(100% - 48px));
+  margin: 0 auto 36px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.panel {
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--bd);
+  border-radius: 8px;
+}
+
+.panelHeader {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--bd);
+}
+
+.panelHeader h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.panelHeader p {
+  margin: 5px 0 0;
+  color: var(--mu);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.form {
+  padding: 20px;
+  display: grid;
+  gap: 14px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.field label,
+.readonlyGrid span {
+  color: var(--mu);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.field input {
+  width: 100%;
+  height: 40px;
+  padding: 0 11px;
+  color: var(--tx);
+  background: var(--card);
+  border: 1px solid var(--bd);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 13px;
+}
+
+.field input:focus {
+  border-color: var(--cyan);
+  outline: 2px solid var(--cyansoft);
+  outline-offset: 1px;
+}
+
+.readonlyGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.readonlyGrid div {
+  min-width: 0;
+  padding: 10px;
+  display: grid;
+  gap: 4px;
+  background: var(--chip);
+  border-radius: 6px;
+}
+
+.readonlyGrid strong {
+  overflow: hidden;
+  color: var(--tx);
+  font-size: 12px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hint {
+  margin: -3px 0 0;
+  color: var(--mu);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.primaryButton {
+  min-height: 38px;
+  padding: 0 16px;
+  color: #0b1230;
+  background: var(--cyan);
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.primaryButton:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.successMessage,
+.errorMessage {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.successMessage {
+  color: var(--tx);
+  background: var(--cyansoft);
+}
+
+.errorMessage {
+  color: var(--tx);
+  background: rgba(255, 104, 44, 0.12);
+}
+
+@media (max-width: 800px) {
+  .stage {
+    width: min(100% - 24px, 560px);
+    grid-template-columns: 1fr;
+  }
+
+  .readonlyGrid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -21,7 +21,7 @@ import logging
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, Response
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.core.db import get_pool
 from app.core.passwords import (
@@ -72,6 +72,16 @@ class ChangePasswordRequest(BaseModel):
 
 class ChangePasswordResponse(BaseModel):
     ok: bool = True
+
+
+class ProfileUpdateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    display_name: str = Field(min_length=1, max_length=120)
+
+
+class ProfileUpdateResponse(BaseModel):
+    user: dict
 
 
 class PasswordResetRedeemRequest(BaseModel):
@@ -396,6 +406,40 @@ async def me(session: SessionData = Depends(require_session)) -> dict:
     return users_repo.to_public_dict(user)
 
 
+@router.patch("/me", response_model=ProfileUpdateResponse)
+async def update_profile(
+    payload: ProfileUpdateRequest,
+    request: Request,
+    session: SessionData = Depends(require_session),
+) -> ProfileUpdateResponse:
+    """Updates the signed-in user's display name and no authorization fields."""
+    display_name = payload.display_name.strip()
+    if not display_name:
+        raise HTTPException(status_code=422, detail="Display name cannot be blank.")
+
+    pool = get_pool()
+    async with pool.acquire() as conn:
+        updated = await users_repo.update_display_name(
+            conn, session.user_id, display_name
+        )
+        if updated is None:
+            raise HTTPException(status_code=401, detail="Not authenticated.")
+
+        await auth_audit.record_event(
+            conn,
+            event_type=auth_audit.PROFILE_UPDATED,
+            outcome=auth_audit.OUTCOME_SUCCESS,
+            actor_user_id=session.user_id,
+            actor_email=session.email,
+            target_user_id=session.user_id,
+            ip_address=_client_ip(request),
+            user_agent=_user_agent(request),
+            detail={"display_name": display_name},
+        )
+
+    return ProfileUpdateResponse(user=users_repo.to_public_dict(updated))
+
+
 # --------------------------------------------------------------------------
 # POST /auth/change-password
 # --------------------------------------------------------------------------
@@ -424,7 +468,6 @@ async def change_password(
             raise HTTPException(status_code=422, detail=str(exc)) from exc
 
         new_hash = hash_password(payload.new_password)
-        await users_repo.set_password(conn, user["id"], new_hash, must_change_password=False)
 
         # Revoke all OTHER sessions for this user, but keep the current
         # request working so changing your own password doesn't log you out
@@ -436,6 +479,15 @@ async def change_password(
         # contract without local special-casing inside sessions.py.
         assert eparking_session is not None
         await destroy_all_for_user(user["id"])
+
+        # Revocation must complete before the credential changes. If Redis
+        # is unavailable, the request fails while the old password remains
+        # valid instead of leaving stale sessions active after a partial
+        # password update.
+        await users_repo.set_password(
+            conn, user["id"], new_hash, must_change_password=False
+        )
+
         new_token = await create_session(
             user_id=user["id"],
             email=user["email"],

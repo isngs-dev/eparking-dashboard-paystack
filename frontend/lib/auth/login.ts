@@ -101,6 +101,7 @@ export interface ChangePasswordResult {
   ok: boolean;
   status: number;
   detail: string;
+  setCookie: string | null;
 }
 
 /**
@@ -126,8 +127,15 @@ export async function changePasswordRequest(
       cache: "no-store",
     });
   } catch (err) {
-    return { ok: false, status: 502, detail: `Failed to reach the authentication service: ${(err as Error).message}` };
+    return {
+      ok: false,
+      status: 502,
+      detail: `Failed to reach the authentication service: ${(err as Error).message}`,
+      setCookie: null,
+    };
   }
+
+  const setCookie = res.headers.get("set-cookie");
 
   let body: Record<string, unknown> = {};
   try {
@@ -138,10 +146,10 @@ export async function changePasswordRequest(
 
   if (!res.ok) {
     const detail = typeof body.detail === "string" ? body.detail : "Unable to change password.";
-    return { ok: false, status: res.status, detail };
+    return { ok: false, status: res.status, detail, setCookie: null };
   }
 
-  return { ok: true, status: res.status, detail: "Password changed." };
+  return { ok: true, status: res.status, detail: "Password changed.", setCookie };
 }
 
 /**

@@ -15,22 +15,6 @@ export interface ResolvedFilters {
 
 export type SearchParams = Record<string, string | string[] | undefined>;
 
-export const FILTER_PARAM_NAMES = ["from", "to", "vehicle_types", "days"] as const;
-
-/** Carries only global filter state when navigating between dashboard pages. */
-export function dashboardHref(
-  pathname: string,
-  searchParams: Pick<URLSearchParams, "get">,
-): string {
-  const filters = new URLSearchParams();
-  for (const name of FILTER_PARAM_NAMES) {
-    const value = searchParams.get(name);
-    if (value) filters.set(name, value);
-  }
-  const query = filters.toString();
-  return query ? `${pathname}?${query}` : pathname;
-}
-
 function firstValue(v: string | string[] | undefined): string | undefined {
   if (Array.isArray(v)) return v[0];
   return v;
