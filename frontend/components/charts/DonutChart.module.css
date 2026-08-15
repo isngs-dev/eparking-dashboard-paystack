@@ -9,6 +9,7 @@
 .svg {
   width: 100%;
   max-width: 220px;
+  max-height: 100%;
   height: auto;
 }
 

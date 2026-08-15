@@ -224,23 +224,36 @@ async def revenue_total_collection(
     filters: CommonFilters = Depends(parse_common_filters),
     _role: str = Depends(require_viewer_or_admin),
 ) -> TotalCollectionResponse:
-    """Total Collection KPI -- from daily_revenue (day-grain rollup)."""
+    """Filter-aware ticket revenue plus applicable untyped card revenue."""
     pool = get_pool()
     async with pool.acquire() as conn:
         today = await get_today(conn)
     date_from, date_to = _resolve_range(filters, today)
-
-    key = cache_key(
-        "revenue_total_collection",
-        {"from": date_from.isoformat(), "to": date_to.isoformat()},
+    effective_filters = CommonFilters(
+        date_from=date_from,
+        date_to=date_to,
+        vehicle_types=filters.vehicle_types,
+        days=filters.days,
     )
+
+    key = cache_key("revenue_total_collection_v2", effective_filters.cache_params())
 
     async def loader() -> dict:
         async with pool.acquire() as conn:
-            totals = await revenue_repo.sum_window(conn, date_from=date_from, date_to=date_to)
-            prior_total_collection = await revenue_repo.get_prior_period_total_collection(
-                conn, date_from=date_from, date_to=date_to
+            totals = await revenue_repo.get_filtered_revenue_totals(
+                conn, filters=effective_filters
             )
+            prior_from, prior_to = revenue_repo.prior_period_range(date_from, date_to)
+            prior_totals = await revenue_repo.get_filtered_revenue_totals(
+                conn,
+                filters=CommonFilters(
+                    date_from=prior_from,
+                    date_to=prior_to,
+                    vehicle_types=filters.vehicle_types,
+                    days=filters.days,
+                ),
+            )
+            prior_total_collection = prior_totals["total_collection"]
         return {
             "date_from": date_from.isoformat(),
             "date_to": date_to.isoformat(),
@@ -276,22 +289,25 @@ async def revenue_split(
     filters: CommonFilters = Depends(parse_common_filters),
     _role: str = Depends(require_viewer_or_admin),
 ) -> RevenueSplitResponse:
-    """AICL/GSDS split amounts for the donut, from daily_revenue +
-    revenue_split_config.
-    """
+    """AICL/GSDS split recalculated from each filtered day's collection."""
     pool = get_pool()
     async with pool.acquire() as conn:
         today = await get_today(conn)
     date_from, date_to = _resolve_range(filters, today)
-
-    key = cache_key(
-        "revenue_split",
-        {"from": date_from.isoformat(), "to": date_to.isoformat()},
+    effective_filters = CommonFilters(
+        date_from=date_from,
+        date_to=date_to,
+        vehicle_types=filters.vehicle_types,
+        days=filters.days,
     )
+
+    key = cache_key("revenue_split_v2", effective_filters.cache_params())
 
     async def loader() -> dict:
         async with pool.acquire() as conn:
-            split = await revenue_repo.get_revenue_split(conn, date_from=date_from, date_to=date_to)
+            split = await revenue_repo.get_filtered_revenue_split(
+                conn, filters=effective_filters
+            )
         return {
             "date_from": date_from.isoformat(),
             "date_to": date_to.isoformat(),

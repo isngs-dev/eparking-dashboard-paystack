@@ -12,7 +12,13 @@ import { DonutChart } from "@/components/charts/DonutChart";
 import { ErrorCard } from "@/components/primitives/ErrorCard";
 import type { TooltipContent } from "@/components/primitives/Tooltip";
 
-export async function VehicleTypeDistributionSection({ filters }: { filters: ResolvedFilters }) {
+export async function VehicleTypeDistributionSection({
+  filters,
+  rowSpan = 1,
+}: {
+  filters: ResolvedFilters;
+  rowSpan?: number;
+}) {
   const { data: dist, errorMessage } = await tryFetch(() =>
     getVehicleTypeDistribution(filters, "range"),
   );
@@ -22,7 +28,7 @@ export async function VehicleTypeDistributionSection({ filters }: { filters: Res
         title="Vehicle Type Distribution"
         message={errorMessage!}
         span={1}
-        rowSpan={2}
+        rowSpan={rowSpan}
       />
     );
   }
@@ -37,7 +43,7 @@ export async function VehicleTypeDistributionSection({ filters }: { filters: Res
   return (
     <SectionCard
       span={1}
-      rowSpan={2}
+      rowSpan={rowSpan}
       title="Vehicle Type Distribution"
       infoTitle="Vehicle type is inferred from the ticket fee tier paid, not from a camera. Hover a segment for detail."
     >

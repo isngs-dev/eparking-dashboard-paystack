@@ -46,6 +46,33 @@
   color: var(--tx);
 }
 
+.currentFilters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-width: 0;
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-size: 10px;
+  color: var(--mu);
+}
+
+.currentFiltersTitle {
+  font-weight: 600;
+  color: var(--tx);
+  white-space: nowrap;
+}
+
+.currentFilter,
+.separator {
+  white-space: nowrap;
+}
+
+.separator {
+  margin-inline: 2px;
+  color: var(--bd);
+}
+
 .spacer {
   margin-left: auto;
 }
@@ -60,4 +87,31 @@
   font-size: 11.5px;
   font-weight: 500;
   cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .currentFilters {
+    order: 2;
+    flex-basis: 100%;
+  }
+
+  .spacer,
+  .clearBtn {
+    order: 1;
+  }
+}
+
+@media (max-width: 560px) {
+  .bar {
+    margin-inline: 12px;
+  }
+
+  .currentFilters {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .separator {
+    display: none;
+  }
 }

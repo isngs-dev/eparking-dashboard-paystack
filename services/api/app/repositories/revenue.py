@@ -12,6 +12,7 @@ from typing import Any
 import asyncpg
 
 from app.core.filters import CommonFilters
+from app.core.sql_filters import build_where
 
 
 def _to_float(value: Any) -> float:
@@ -25,6 +26,118 @@ def _to_float(value: Any) -> float:
 # Public alias -- other layers (routers) convert NUMERIC rows to float too;
 # keep the conversion logic in one place rather than duplicating it.
 to_float = _to_float
+
+
+def _filtered_daily_revenue_sql(filters: CommonFilters) -> tuple[str, list]:
+    """Build the transaction-level daily revenue query used by filtered KPIs.
+
+    Date/day filters apply to every revenue row. Vehicle filters apply only
+    to parking tickets; card subscriptions remain included because they do
+    not carry a vehicle type.
+    """
+    where_extra, params = build_where(
+        filters,
+        date_column="transaction_date",
+        day_of_week_column="day_of_week",
+    )
+    ticket_condition = "revenue_stream = 'parking_ticket'"
+    if filters.vehicle_types:
+        vehicle_param = len(params) + 1
+        ticket_condition += f" AND vehicle_type = ANY(${vehicle_param}::text[])"
+        params.append(list(filters.vehicle_types))
+
+    sql = f"""
+        SELECT
+            transaction_date AS revenue_date,
+            COALESCE(SUM(amount) FILTER (WHERE {ticket_condition}), 0) AS ticket_amount,
+            COALESCE(
+                SUM(amount) FILTER (WHERE revenue_stream = 'card_subscription'),
+                0
+            ) AS card_total_amount,
+            COALESCE(SUM(amount) FILTER (WHERE {ticket_condition}), 0)
+                + COALESCE(
+                    SUM(amount) FILTER (WHERE revenue_stream = 'card_subscription'),
+                    0
+                ) AS total_collection,
+            COUNT(*) FILTER (
+                WHERE ({ticket_condition})
+                   OR revenue_stream = 'card_subscription'
+            ) AS transaction_count_total
+        FROM eparking.dashboard_transactions
+        WHERE status = 'success' AND is_revenue{where_extra}
+        GROUP BY transaction_date
+    """
+    return sql, params
+
+
+async def get_filtered_daily_revenue(
+    conn: asyncpg.Connection,
+    *,
+    filters: CommonFilters,
+) -> list[dict]:
+    sql, params = _filtered_daily_revenue_sql(filters)
+    rows = await conn.fetch(f"{sql}\nORDER BY revenue_date", *params)
+    return [
+        {
+            "revenue_date": row["revenue_date"],
+            "ticket_amount": _to_float(row["ticket_amount"]),
+            "card_total_amount": _to_float(row["card_total_amount"]),
+            "total_collection": _to_float(row["total_collection"]),
+            "transaction_count_total": row["transaction_count_total"],
+        }
+        for row in rows
+    ]
+
+
+async def get_filtered_revenue_totals(
+    conn: asyncpg.Connection,
+    *,
+    filters: CommonFilters,
+) -> dict:
+    rows = await get_filtered_daily_revenue(conn, filters=filters)
+    return {
+        "ticket_amount": sum(row["ticket_amount"] for row in rows),
+        "card_total_amount": sum(row["card_total_amount"] for row in rows),
+        "total_collection": sum(row["total_collection"] for row in rows),
+        "transaction_count_total": sum(row["transaction_count_total"] for row in rows),
+    }
+
+
+async def get_filtered_revenue_split(
+    conn: asyncpg.Connection,
+    *,
+    filters: CommonFilters,
+) -> dict:
+    """Apply each day's effective split percentages to its filtered total."""
+    daily_sql, params = _filtered_daily_revenue_sql(filters)
+    row = await conn.fetchrow(
+        f"""
+        WITH daily AS (
+            {daily_sql}
+        )
+        SELECT
+            COALESCE(SUM(ROUND(d.total_collection * COALESCE(r.aicl_pct, 0), 2)), 0)
+                AS aicl_amount,
+            COALESCE(SUM(ROUND(d.total_collection * COALESCE(r.gsds_pct, 0), 2)), 0)
+                AS gsds_amount,
+            COALESCE(SUM(d.total_collection), 0) AS total_collection
+        FROM daily d
+        LEFT JOIN eparking.revenue_split_config r
+          ON r.effective_from <= d.revenue_date
+         AND (r.effective_to IS NULL OR d.revenue_date <= r.effective_to)
+        """,
+        *params,
+    )
+    aicl_amount = _to_float(row["aicl_amount"])
+    gsds_amount = _to_float(row["gsds_amount"])
+    total_collection = _to_float(row["total_collection"])
+    return {
+        "aicl_amount": aicl_amount,
+        "gsds_amount": gsds_amount,
+        "total_collection": total_collection,
+        "aicl_pct": aicl_amount / total_collection if total_collection > 0 else None,
+        "gsds_pct": gsds_amount / total_collection if total_collection > 0 else None,
+    }
 
 
 async def get_daily_revenue_range(

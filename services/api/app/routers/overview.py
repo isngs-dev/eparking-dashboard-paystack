@@ -34,19 +34,21 @@ router = APIRouter(prefix="/api", tags=["overview"])
 async def overview_summary(
     response: Response, _role: str = Depends(require_viewer_or_admin)
 ) -> OverviewSummaryResponse:
-    """Daily/Weekly/Monthly KPIs, each carrying its own explicit labeled date
+    """Daily/Weekly/Monthly/Yearly KPIs, each with an explicit labeled date
     range so the frontend can never present them ambiguously (fixes the old
     dashboard's Daily > Monthly bug -- see api-layer skill).
 
     Each window ends today in the business timezone. Daily is today only,
-    Weekly is Monday-to-today, and Monthly is the first of the month through
-    today. They are not affected by from/to filters: each KPI has a fixed,
-    explicit calendar-to-date definition.
+    Weekly is Monday-to-today, Monthly is the first of the month through
+    today, and Yearly is January 1 through today. They are not affected by
+    from/to filters: each KPI has a fixed calendar-to-date definition.
     """
     pool = get_pool()
     async with pool.acquire() as conn:
         today = await get_today(conn)
-    key = cache_key("overview_summary", {"today": today.isoformat()})
+    # Versioned because the cached payload gained the `yearly` window; an
+    # older Redis value must never be decoded against the expanded response.
+    key = cache_key("overview_summary_v2", {"today": today.isoformat()})
 
     async def loader() -> dict:
         async with pool.acquire() as conn:
@@ -90,6 +92,7 @@ async def overview_summary(
         daily=KPIWindow(**v["daily"]),
         weekly=KPIWindow(**v["weekly"]),
         monthly=KPIWindow(**v["monthly"]),
+        yearly=KPIWindow(**v["yearly"]),
     )
 
 
@@ -99,23 +102,29 @@ async def revenue_trend(
     filters: CommonFilters = Depends(parse_common_filters),
     _role: str = Depends(require_viewer_or_admin),
 ) -> RevenueTrendResponse:
-    """Day-grain series from `daily_revenue`, zero-filled for gap days."""
+    """Filter-aware daily revenue, zero-filled across the selected range.
+
+    Vehicle type limits ticket revenue only; card revenue remains included.
+    """
     pool = get_pool()
 
     async with pool.acquire() as conn:
         today = await get_today(conn)
     date_from = filters.date_from or (today - timedelta(days=29))
     date_to = filters.date_to or today
-
-    key = cache_key(
-        "revenue_trend",
-        {"from": date_from.isoformat(), "to": date_to.isoformat()},
+    effective_filters = CommonFilters(
+        date_from=date_from,
+        date_to=date_to,
+        vehicle_types=filters.vehicle_types,
+        days=filters.days,
     )
+
+    key = cache_key("revenue_trend_v2", effective_filters.cache_params())
 
     async def loader() -> dict:
         async with pool.acquire() as conn:
-            rows = await revenue_repo.get_daily_revenue_range(
-                conn, date_from=date_from, date_to=date_to
+            rows = await revenue_repo.get_filtered_daily_revenue(
+                conn, filters=effective_filters
             )
         filled = revenue_repo.zero_fill(
             [

@@ -35,7 +35,7 @@ export interface DateRangePickerProps {
   onChange: (from: string, to: string) => void;
 }
 
-function triggerLabel(from: string, to: string): string {
+export function formatDateRangeLabel(from: string, to: string): string {
   if (from === to) {
     return formatFullDate(from);
   }
@@ -233,7 +233,7 @@ export function DateRangePicker({ from, to, onChange }: DateRangePickerProps) {
         onClick={() => (open ? closeCancel() : openPicker())}
       >
         <span className={styles.chipLabel}>Date range</span>
-        <span className={styles.value}>{triggerLabel(from, to)}</span>
+        <span className={styles.value}>{formatDateRangeLabel(from, to)}</span>
       </button>
 
       {open ? (

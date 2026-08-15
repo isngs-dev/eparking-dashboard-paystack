@@ -1,22 +1,22 @@
+import { Suspense } from "react";
 import { getOverviewSummary, getTotalCollection } from "@/lib/api/client";
 import { BackendFetchError } from "@/lib/api/backendFetch";
-import { activeFilterKinds, type ResolvedFilters } from "@/lib/filters";
-import type { EndpointKey, FilterKind } from "@/lib/api/endpointFilters";
-import { ignoredFiltersFootnote } from "@/lib/api/endpointFilters";
+import type { ResolvedFilters } from "@/lib/filters";
 import { formatNaira, formatInt, formatShortDate } from "@/lib/format";
 import { KpiCard } from "@/components/kpi/KpiCard";
 import { ErrorCard } from "@/components/primitives/ErrorCard";
+import { SkeletonCard } from "@/components/primitives/Skeleton";
+import { VisualErrorBoundary } from "@/components/primitives/VisualErrorBoundary";
 import type { KPIWindow, TotalCollectionResponse } from "@/lib/api/types";
+import styles from "./RevenueKpiCards.module.css";
 
-function windowCard(label: string, w: KPIWindow, endpointKey: EndpointKey, active: FilterKind[]) {
+function windowCard(label: string, w: KPIWindow) {
   return (
     <KpiCard
       key={label}
       label={label}
       value={formatNaira(w.total_collection)}
       sublabel={w.date_range.label}
-      deltaPct={w.delta_pct}
-      footnote={ignoredFiltersFootnote(endpointKey, active)}
       tooltip={{
         title: label,
         rows: [
@@ -34,40 +34,79 @@ function windowCard(label: string, w: KPIWindow, endpointKey: EndpointKey, activ
   );
 }
 
-export async function RevenueKpiCards({ filters }: { filters: ResolvedFilters }) {
-  let summary, total;
+async function RevenueWindowKpiCards() {
+  let summary;
   try {
-    [summary, total] = await Promise.all([getOverviewSummary(), getTotalCollection(filters)]);
+    summary = await getOverviewSummary();
   } catch (err) {
-    const message = err instanceof BackendFetchError ? err.detail : "Failed to load revenue KPIs.";
-    return <ErrorCard title="Daily/Weekly/Monthly/Total Collection" message={message} span={4} />;
+    const message =
+      err instanceof BackendFetchError
+        ? err.detail
+        : "Failed to load revenue KPIs.";
+    return (
+      <ErrorCard
+        title="Daily/Weekly/Monthly/Yearly Revenue"
+        message={message}
+        span={4}
+      />
+    );
   }
-  const active = activeFilterKinds(filters);
 
   return (
     <>
-      {windowCard("Today's Revenue", summary.daily, "overview_summary", active)}
-      {windowCard("Weekly Revenue", summary.weekly, "overview_summary", active)}
-      {windowCard("Monthly Revenue", summary.monthly, "overview_summary", active)}
-      <TotalCollectionCard total={total} active={active} />
+      {windowCard("Today's Revenue", summary.daily)}
+      {windowCard("Weekly Revenue", summary.weekly)}
+      {windowCard("Monthly Revenue", summary.monthly)}
+      {windowCard("Yearly Revenue", summary.yearly)}
     </>
   );
 }
 
-function TotalCollectionCard({
-  total,
-  active,
+export function RevenueWindowKpiSection() {
+  return (
+    <div className={styles.fixedGrid}>
+      <VisualErrorBoundary
+        title="Daily/Weekly/Monthly/Yearly Revenue"
+        span={4}
+      >
+        <Suspense
+          fallback={
+            <>
+              <SkeletonCard span={1} height={60} />
+              <SkeletonCard span={1} height={60} />
+              <SkeletonCard span={1} height={60} />
+              <SkeletonCard span={1} height={60} />
+            </>
+          }
+        >
+          <RevenueWindowKpiCards />
+        </Suspense>
+      </VisualErrorBoundary>
+    </div>
+  );
+}
+
+export async function TotalCollectionKpiCard({
+  filters,
 }: {
-  total: TotalCollectionResponse;
-  active: FilterKind[];
+  filters: ResolvedFilters;
 }) {
+  let total: TotalCollectionResponse;
+  try {
+    total = await getTotalCollection(filters);
+  } catch (err) {
+    const message =
+      err instanceof BackendFetchError
+        ? err.detail
+        : "Failed to load total collection.";
+    return <ErrorCard title="Total Collection" message={message} />;
+  }
+
   return (
     <KpiCard
       label="Total Collection"
       value={formatNaira(total.total_collection)}
       sublabel={total.date_range.label}
-      deltaPct={total.delta_pct}
-      footnote={ignoredFiltersFootnote("revenue_total_collection", active)}
       tooltip={{
         title: "Total Collection",
         rows: [

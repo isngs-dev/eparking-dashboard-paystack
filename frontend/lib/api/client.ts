@@ -18,6 +18,7 @@ import type {
   RevenueTrendResponse,
   TicketDailyByTierResponse,
   TotalCollectionResponse,
+  TrafficSummaryResponse,
   TrafficTodayResponse,
   VehicleTypeDistributionResponse,
   VehicleTypesFilterResponse,
@@ -121,6 +122,10 @@ export function getWeeklyPattern(filters: ResolvedFilters): Promise<WeeklyPatter
 
 export function getTrafficToday(): Promise<TrafficTodayResponse> {
   return backendFetch<TrafficTodayResponse>("/api/traffic/today");
+}
+
+export function getTrafficSummary(): Promise<TrafficSummaryResponse> {
+  return backendFetch<TrafficSummaryResponse>("/api/traffic/summary");
 }
 
 export function getVehicleTypesFilter(): Promise<VehicleTypesFilterResponse> {

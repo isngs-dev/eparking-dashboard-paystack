@@ -37,6 +37,7 @@ class OverviewSummaryResponse(BaseModel):
     daily: KPIWindow
     weekly: KPIWindow
     monthly: KPIWindow
+    yearly: KPIWindow
 
 
 class RevenueTrendPoint(BaseModel):
@@ -161,6 +162,20 @@ class TrafficTodayResponse(BaseModel):
     date: date
     vehicle_count: int
     entry_count_basis: str
+
+
+class VehicleKPIWindow(BaseModel):
+    label: str
+    date_range: DateRange
+    vehicle_count: int
+    entry_count_basis: str
+
+
+class TrafficSummaryResponse(BaseModel):
+    daily: VehicleKPIWindow
+    weekly: VehicleKPIWindow
+    monthly: VehicleKPIWindow
+    yearly: VehicleKPIWindow
 
 
 class VehicleTypesFilterResponse(BaseModel):

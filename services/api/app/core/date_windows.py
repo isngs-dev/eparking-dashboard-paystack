@@ -17,9 +17,10 @@ def _compact_range(date_from: date, date_to: date) -> str:
 
 
 def revenue_kpi_windows(today: date) -> dict[str, KPIWindowDefinition]:
-    """Daily, Monday-based week-to-date, and month-to-date windows."""
+    """Daily, Monday-based WTD, month-to-date, and year-to-date windows."""
     week_start = today - timedelta(days=today.weekday())
     month_start = today.replace(day=1)
+    year_start = today.replace(month=1, day=1)
 
     return {
         "daily": (today, today, "Today"),
@@ -33,4 +34,14 @@ def revenue_kpi_windows(today: date) -> dict[str, KPIWindowDefinition]:
             today,
             f"Month to date · {_compact_range(month_start, today)}",
         ),
+        "yearly": (
+            year_start,
+            today,
+            f"Year to date · {_compact_range(year_start, today)}",
+        ),
     }
+
+
+def vehicle_kpi_windows(today: date) -> dict[str, KPIWindowDefinition]:
+    """Vehicle-count windows mirror the fixed revenue KPI calendar windows."""
+    return revenue_kpi_windows(today)

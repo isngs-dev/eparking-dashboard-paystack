@@ -32,8 +32,8 @@ export type EndpointKey =
 export const ENDPOINT_FILTERS: Record<EndpointKey, FilterKind[]> = {
   // Fixed calendar-to-date windows (Today/WTD/MTD) -- ignores all global filters.
   overview_summary: [],
-  // Day-grain rollup has no per-vehicle/day-of-week dimension; honors from/to only.
-  revenue_trend: ["date"],
+  // Vehicle type limits tickets; untyped card revenue remains included.
+  revenue_trend: ["date", "vehicle_types", "days"],
   // Honors all filters.
   vehicle_type_distribution: ["date", "vehicle_types", "days"],
   // Cards have no vehicle_type; honors from/to/days.
@@ -41,9 +41,9 @@ export const ENDPOINT_FILTERS: Record<EndpointKey, FilterKind[]> = {
   cards_total: ["date", "days"],
   // Honors all filters.
   tickets_daily_by_tier: ["date", "vehicle_types", "days"],
-  // Ignores vehicle_types/days (day-grain rollup, no per-vehicle dimension).
-  revenue_total_collection: ["date"],
-  revenue_split: ["date"],
+  // Vehicle type limits tickets; untyped card revenue remains included.
+  revenue_total_collection: ["date", "vehicle_types", "days"],
+  revenue_split: ["date", "vehicle_types", "days"],
   // Honors all filters.
   occupancy_entry_count: ["date", "vehicle_types", "days"],
   occupancy_by_hour: ["date", "vehicle_types", "days"],

@@ -24,3 +24,11 @@
   grid-template-rows: auto minmax(280px, 320px) minmax(280px, 320px);
   gap: 14px;
 }
+
+.overview {
+  grid-template-rows: repeat(2, minmax(300px, 320px));
+}
+
+.occupancy {
+  grid-template-rows: minmax(410px, 430px) minmax(280px, 320px);
+}

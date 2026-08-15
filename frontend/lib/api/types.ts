@@ -27,6 +27,7 @@ export interface OverviewSummaryResponse {
   daily: KPIWindow;
   weekly: KPIWindow;
   monthly: KPIWindow;
+  yearly: KPIWindow;
 }
 
 export interface RevenueTrendPoint {
@@ -152,6 +153,20 @@ export interface TrafficTodayResponse {
   date: string;
   vehicle_count: number;
   entry_count_basis: string;
+}
+
+export interface VehicleKPIWindow {
+  label: string;
+  date_range: DateRange;
+  vehicle_count: number;
+  entry_count_basis: string;
+}
+
+export interface TrafficSummaryResponse {
+  daily: VehicleKPIWindow;
+  weekly: VehicleKPIWindow;
+  monthly: VehicleKPIWindow;
+  yearly: VehicleKPIWindow;
 }
 
 export interface VehicleTypesFilterResponse {

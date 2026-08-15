@@ -11,7 +11,10 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useTransition } from "react";
 import { DAY_OPTIONS, defaultDateRange } from "@/lib/filters";
 import { vehicleTypeLabel } from "@/lib/seriesColors";
-import { DateRangePicker } from "@/components/filter/DateRangePicker";
+import {
+  DateRangePicker,
+  formatDateRangeLabel,
+} from "@/components/filter/DateRangePicker";
 import styles from "./FilterBar.module.css";
 
 export function FilterBar({ vehicleTypes }: { vehicleTypes: string[] }) {
@@ -25,6 +28,9 @@ export function FilterBar({ vehicleTypes }: { vehicleTypes: string[] }) {
   const to = searchParams.get("to") ?? defaults.to;
   const vehicleTypesParam = searchParams.get("vehicle_types") ?? "";
   const daysParam = searchParams.get("days") ?? "";
+  const dateLabel = formatDateRangeLabel(from, to);
+  const vehicleLabel = vehicleTypesParam ? vehicleTypeLabel(vehicleTypesParam) : "All types";
+  const dayLabel = DAY_OPTIONS.find((day) => day.value === daysParam)?.label ?? "All days";
 
   function pushParams(next: Record<string, string | undefined>) {
     const params = new URLSearchParams(searchParams.toString());
@@ -80,6 +86,18 @@ export function FilterBar({ vehicleTypes }: { vehicleTypes: string[] }) {
             </option>
           ))}
         </select>
+      </div>
+
+      <div
+        className={styles.currentFilters}
+        aria-label={`Current filters: Date ${dateLabel}, Vehicle type ${vehicleLabel}, Day ${dayLabel}`}
+      >
+        <span className={styles.currentFiltersTitle}>Current Filters:</span>
+        <span className={styles.currentFilter}>Date – {dateLabel}</span>
+        <span className={styles.separator} aria-hidden="true">·</span>
+        <span className={styles.currentFilter}>Vehicle type – {vehicleLabel}</span>
+        <span className={styles.separator} aria-hidden="true">·</span>
+        <span className={styles.currentFilter}>Day – {dayLabel}</span>
       </div>
 
       <div className={styles.spacer} />
