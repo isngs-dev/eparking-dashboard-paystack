@@ -175,3 +175,49 @@ class SelfServiceAccountManagementTests(IsolatedAsyncioTestCase):
                 )
 
         set_password_mock.assert_not_awaited()
+
+    async def test_user_password_change_clears_forced_change_and_reissues_session(self) -> None:
+        conn = _Connection()
+        payload = ChangePasswordRequest(
+            current_password="Temporary secure passphrase 2026",
+            new_password="Personal secure passphrase 2026",
+        )
+
+        with (
+            patch("app.routers.auth.get_pool", return_value=_Pool(conn)),
+            patch(
+                "app.routers.auth.users_repo.get_user_by_id",
+                new=AsyncMock(return_value=_user(must_change_password=True)),
+            ),
+            patch("app.routers.auth.verify_password", return_value=True),
+            patch("app.routers.auth.validate_password_policy"),
+            patch("app.routers.auth.hash_password", return_value="new-hash"),
+            patch(
+                "app.routers.auth.destroy_all_for_user", new=AsyncMock(return_value=1)
+            ) as revoke_mock,
+            patch(
+                "app.routers.auth.users_repo.set_password",
+                new=AsyncMock(return_value=_user(hashed_password="new-hash")),
+            ) as set_password_mock,
+            patch(
+                "app.routers.auth.create_session",
+                new=AsyncMock(return_value="replacement-token"),
+            ) as create_session_mock,
+            patch("app.routers.auth.auth_audit.record_event", new=AsyncMock()),
+        ):
+            response = Response()
+            result = await change_password(
+                payload,
+                _request(),
+                response,
+                _session(),
+                "temporary-session-token",
+            )
+
+        revoke_mock.assert_awaited_once_with(7)
+        set_password_mock.assert_awaited_once_with(
+            conn, 7, "new-hash", must_change_password=False
+        )
+        create_session_mock.assert_awaited_once()
+        self.assertTrue(result.ok)
+        self.assertIn("eparking_session=replacement-token", response.headers["set-cookie"])

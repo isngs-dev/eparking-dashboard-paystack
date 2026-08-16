@@ -470,7 +470,7 @@ async def create_user(
             role=payload.role,
             display_name=payload.display_name,
             organization=payload.organization,
-            must_change_password=False,
+            must_change_password=True,
         )
 
         actor_user_id, actor_email = _actor_from_request(request)
@@ -587,7 +587,7 @@ async def update_user_password(
         actor_user_id, actor_email = _actor_from_request(request)
         async with conn.transaction():
             updated = await users_repo.set_password(
-                conn, user_id, new_hash, must_change_password=False
+                conn, user_id, new_hash, must_change_password=True
             )
             if updated is None:
                 raise HTTPException(status_code=404, detail=f"user id={user_id} not found")

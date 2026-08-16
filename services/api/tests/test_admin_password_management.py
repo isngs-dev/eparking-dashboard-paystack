@@ -44,7 +44,7 @@ def _request() -> Request:
 
 
 class AdminPasswordManagementTests(IsolatedAsyncioTestCase):
-    async def test_create_user_uses_admin_password_without_forcing_change(self) -> None:
+    async def test_create_user_marks_admin_password_for_change_on_first_login(self) -> None:
         conn = _Connection()
         created = {
             "id": 9,
@@ -52,7 +52,7 @@ class AdminPasswordManagementTests(IsolatedAsyncioTestCase):
             "role": "VIEWER",
             "display_name": "Viewer",
             "organization": None,
-            "must_change_password": False,
+            "must_change_password": True,
             "hashed_password": "not-public",
         }
         payload = UserCreateRequest(
@@ -84,9 +84,9 @@ class AdminPasswordManagementTests(IsolatedAsyncioTestCase):
             role="VIEWER",
             display_name="Viewer",
             organization=None,
-            must_change_password=False,
+            must_change_password=True,
         )
-        self.assertFalse(response.user["must_change_password"])
+        self.assertTrue(response.user["must_change_password"])
         self.assertFalse(hasattr(response, "initial_password"))
 
     async def test_create_user_rejects_password_below_policy(self) -> None:
@@ -114,7 +114,11 @@ class AdminPasswordManagementTests(IsolatedAsyncioTestCase):
             "must_change_password": False,
             "hashed_password": "old-hash",
         }
-        updated = {**existing, "hashed_password": "new-hash"}
+        updated = {
+            **existing,
+            "hashed_password": "new-hash",
+            "must_change_password": True,
+        }
         payload = AdminPasswordUpdateRequest(new_password="Another secure passphrase 2026")
 
         with (
@@ -137,10 +141,11 @@ class AdminPasswordManagementTests(IsolatedAsyncioTestCase):
 
         hash_mock.assert_called_once_with("Another secure passphrase 2026")
         set_password_mock.assert_awaited_once_with(
-            conn, 9, "new-hash", must_change_password=False
+            conn, 9, "new-hash", must_change_password=True
         )
         revoke_mock.assert_awaited_once_with(9)
         self.assertEqual(response.user["id"], 9)
+        self.assertTrue(response.user["must_change_password"])
         self.assertNotIn("hashed_password", response.user)
         audit_mock.assert_awaited_once()
 

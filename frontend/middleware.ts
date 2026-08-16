@@ -60,5 +60,5 @@ export function sanitizeNextPath(path: string): string {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|logos|login|api/auth).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|logos|login|change-password|api/auth).*)"],
 };

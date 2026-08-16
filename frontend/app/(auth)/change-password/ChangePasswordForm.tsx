@@ -14,7 +14,7 @@ function SubmitButton() {
   );
 }
 
-/** Voluntary password-change form for an authenticated user. */
+/** Mandatory first-login password-change form for an authenticated user. */
 export function ChangePasswordForm() {
   const [state, formAction] = useFormState(changePasswordAction, initialChangePasswordState);
 

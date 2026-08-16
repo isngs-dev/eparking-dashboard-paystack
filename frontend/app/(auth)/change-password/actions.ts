@@ -2,12 +2,12 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { changePasswordRequest } from "@/lib/auth/login";
+import { changePasswordRequest, parseSetCookie } from "@/lib/auth/login";
 import { SESSION_COOKIE_NAME } from "@/lib/auth/constants";
 import type { ChangePasswordFormState } from "./types";
 
 /**
- * Server action backing the minimal change-password stub. Requires an
+ * Server action backing the mandatory first-login password change. Requires an
  * existing session cookie (forwarded explicitly -- server actions don't run
  * in the browser's fetch context, so cookies must be read via `cookies()`
  * and attached manually). Never logs password fields.
@@ -39,6 +39,29 @@ export async function changePasswordAction(
   if (!result.ok) {
     return { error: result.detail || "Unable to change password." };
   }
+
+  if (!result.setCookie) {
+    return {
+      error: "Password changed, but your replacement session was not returned. Please sign in again.",
+    };
+  }
+
+  const replacement = parseSetCookie(result.setCookie);
+  if (!replacement) {
+    return {
+      error: "Password changed, but your replacement session was invalid. Please sign in again.",
+    };
+  }
+
+  cookies().set({
+    name: replacement.name,
+    value: replacement.value,
+    httpOnly: replacement.httpOnly,
+    secure: replacement.secure,
+    sameSite: replacement.sameSite,
+    path: replacement.path ?? "/",
+    ...(replacement.maxAge !== undefined ? { maxAge: replacement.maxAge } : {}),
+  });
 
   redirect("/");
 }

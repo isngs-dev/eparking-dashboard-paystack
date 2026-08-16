@@ -49,7 +49,7 @@ async def create_user(
     role: str,
     display_name: str,
     organization: str | None = None,
-    must_change_password: bool = False,
+    must_change_password: bool = True,
 ) -> dict:
     """Creates a user, hashing `password` here (callers must have already run
     `app.core.passwords.validate_password_policy` on the plaintext password

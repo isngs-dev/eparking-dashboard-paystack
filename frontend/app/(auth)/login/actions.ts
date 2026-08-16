@@ -45,6 +45,10 @@ export async function loginAction(_prevState: LoginFormState, formData: FormData
     }
   }
 
+  if (result.mustChangePassword) {
+    redirect("/change-password");
+  }
+
   redirect(nextPath);
 }
 

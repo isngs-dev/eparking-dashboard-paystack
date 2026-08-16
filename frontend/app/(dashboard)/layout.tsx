@@ -30,6 +30,10 @@ export default async function DashboardLayout({ children }: { children: ReactNod
     redirect("/login");
   }
 
+  if (user.must_change_password) {
+    redirect("/change-password");
+  }
+
   return (
     <>
       <Navbar user={user} />
