@@ -19,6 +19,26 @@
   display: block;
 }
 
+/* Prominent rectangular treatment used on the landing page. */
+.prominent {
+  width: 150px;
+  height: 72px;
+  padding: 0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.prominentMark {
+  /* The source PNG includes substantial transparent padding. Rendering its
+     canvas wider than the badge enlarges the visible wordmark. Its visible
+     artwork is left-heavy inside that canvas, so the translation centers the
+     artwork rather than merely centering the transparent PNG bounds. */
+  width: 160px;
+  max-width: none;
+  height: auto;
+  transform: translateX(15px);
+}
+
 /* Viewport-pinned variant, used once per dashboard page. */
 .fixed {
   position: fixed;

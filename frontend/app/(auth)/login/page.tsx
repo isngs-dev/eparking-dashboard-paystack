@@ -23,8 +23,8 @@ export default function LoginPage({
             <Image
               src="/logos/aicl.png"
               alt="Abuja Investments Company Limited"
-              width={64}
-              height={64}
+              width={100}
+              height={100}
               className={styles.aiclLogo}
               priority
             />
@@ -44,16 +44,18 @@ export default function LoginPage({
 
         <div className={styles.brandContent}>
           <h2 className={styles.brandHeading}>
-            Welcome to
+            <span className={styles.brandHeadingLine}>
+              Welcome to Garki International Market
+            </span>
             <br />
-            Your parking management dashboard
+            Parking Management Dashboard
           </h2>
           <p className={styles.brandSubtext}>
             Monitor and manage your parking facility with real-time insights
           </p>
         </div>
 
-        <FloatingBrandBadge className={styles.brandBadgePosition} />
+        <FloatingBrandBadge prominent className={styles.brandBadgePosition} />
       </div>
     </div>
   );

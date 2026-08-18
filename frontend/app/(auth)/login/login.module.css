@@ -34,9 +34,9 @@
 }
 
 .aiclLogo {
-  width: 64px;
-  height: 64px;
-  border-radius: 8px;
+  width: 100px;
+  height: 100px;
+  border-radius: 12px;
   object-fit: contain;
   display: block;
 }
@@ -173,6 +173,7 @@
 
 .brandPanel {
   position: relative;
+  container-type: inline-size;
   background: var(--navbg);
   color: var(--navtx);
   display: flex;
@@ -200,15 +201,19 @@
 .brandContent {
   position: relative;
   z-index: 1;
-  max-width: 480px;
+  width: 100%;
 }
 
 .brandHeading {
-  font-size: 40px;
+  font-size: clamp(19px, 3.95cqw, 40px);
   font-weight: 700;
   color: #ffffff;
   line-height: 1.2;
   margin: 0 0 16px;
+}
+
+.brandHeadingLine {
+  white-space: nowrap;
 }
 
 .brandSubtext {
